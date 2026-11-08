@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sistemas de ecuaciones Unidad IV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: hoja cuadriculada, una columna de lectura, notas de la profe en rojo; los gráficos son ejes cartesianos sobre la misma cuadrícula */
+:root{
+  --paper:#FAFAF6; --grid:rgba(40,80,170,.07); --card:#FFFFFF; --text:#1C2130; --muted:#5A6276;
+  --ink:#1E3A94; --ink-soft:rgba(30,58,148,.10); --red:#C2322A; --hl:#FFF0A0; --line:#D9DCE6;
+  --c1:#1E3A94; --c2:#E08A1E; --c3:#2E8B6E;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font:17px/1.6 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:760px;margin:0 auto;padding-block:32px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;color:var(--ink)}
+h2{font-size:1.6rem;font-weight:800;display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:var(--f-mono);font-size:.95rem;color:var(--red);font-weight:500}
+h3{font-size:1.12rem;font-weight:600}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.1rem;color:var(--muted);max-width:60ch}
+header{display:flex;flex-direction:column;gap:12px}
+.plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.plan div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.plan b{font-family:var(--f-display);color:var(--ink)}
+.plan span{font-size:.92rem;color:var(--muted);line-height:1.4}
+.plan a{color:var(--ink);font-weight:700}
+@media (max-width:560px){.plan{grid-template-columns:1fr}}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav a{font-size:.88rem;color:var(--ink);text-decoration:none;border:1px solid var(--ink-soft);background:var(--card);border-radius:99px;padding:4px 12px}
+nav a:hover,nav a:focus-visible{background:var(--ink-soft);outline:none}
+.def{background:var(--card);border-left:3px solid var(--ink);padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.def p b{color:var(--ink)}
+.nota{font-family:var(--f-hand);font-size:1.45rem;line-height:1.2;color:var(--red);transform:rotate(-.6deg);padding-left:4px}
+mark{background:var(--hl);color:inherit;padding:0 3px;border-radius:2px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;background:var(--card);font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border:1px solid var(--line);padding:6px 12px;text-align:center}
+th{font-family:var(--f-mono);font-weight:500;font-size:.85rem;background:var(--ink-soft);color:var(--ink)}
+td.l{text-align:left}
+.mono{font-family:var(--f-mono);font-size:.92em}
+.cuenta{font-family:var(--f-mono);font-size:.95rem;background:var(--card);border:1px dashed var(--ink);border-radius:6px;padding:12px 16px;color:var(--text);overflow-x:auto;display:flex;flex-direction:column;gap:2px;white-space:nowrap}
+.cuenta .c{color:var(--muted);font-family:var(--f-body);font-size:.88rem;white-space:normal}
+.sis{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.95rem;vertical-align:middle}
+.sis::before{content:"{";font-size:2.4em;line-height:1;font-weight:300;color:var(--ink)}
+.sis span{display:flex;flex-direction:column;line-height:1.35}
+.pasos{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.charts{grid-template-columns:1fr}}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px}
+figure.solo{max-width:380px}
+figcaption{font-size:.88rem;color:var(--muted)}
+figcaption b{color:var(--text)}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:10px var(--f-body)}
+svg .gl{stroke:var(--line);stroke-width:.6}
+svg .ax{stroke:var(--muted);stroke-width:1.2}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px}
+summary{cursor:pointer;padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font-family:var(--f-mono);color:var(--ink);width:1em}
+details[open] summary::before{content:"−"}
+summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tag{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:2px 8px;margin-left:auto;white-space:nowrap}
+.tag.hoy{background:var(--ink);color:var(--card)}
+.tag.man{border:1px solid var(--ink);color:var(--ink)}
+.sol{padding:0 16px 16px 40px;display:flex;flex-direction:column;gap:10px}
+@media (max-width:480px){.sol{padding-left:16px}}
+.ejlist{display:flex;flex-direction:column;gap:8px}
+ul.r{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+footer{font-size:.85rem;color:var(--muted)}
+footer a{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">3er año · Unidad IV</span>
+  <h1>Sistemas de ecuaciones, de cero al martes</h1>
+  <p class="lead">Todo lo que entra en el examen, con ejemplos chicos. Al final están los 9 ejercicios del cuadernillo con sus respuestas, para controlar lo que hagas.</p>
+  <div class="plan">
+    <div><b>Domingo</b><span>Leer las secciones 1 a 9. Hacer los ejercicios 2, 4, 5, 6 a-b-c y 8.</span></div>
+    <div><b>Lunes</b><span>Ejercicios 1, 3, 6 d-e-f, 7 y 9. Después, la práctica nueva.</span></div>
+    <div><b>Lunes a la noche</b><span>Simulacro de examen, sin mirar la guía.</span><a href="simulacro.html">Abrir práctica y simulacro →</a></div>
+  </div>
+  <nav>
+    <a href="#s1">Qué es un sistema</a><a href="#s2">Despejar y</a><a href="#s3">Método gráfico</a><a href="#s4">Clasificación</a>
+    <a href="#s5">Igualación</a><a href="#s6">Sustitución</a><a href="#s7">Reducción</a><a href="#s8">Problemas</a><a href="#s9">Errores típicos</a><a href="#ej">Ejercicios</a>
+  </nav>
+</header>
+
+<section id="s1">
+  <h2><span class="n">1</span>Qué es un sistema de ecuaciones</h2>
+  <p>Son <b>dos ecuaciones con dos incógnitas</b> (x e y) que se tienen que cumplir <b>al mismo tiempo</b>. Se escriben con una llave:</p>
+  <p><span class="sis"><span><span>x + y = 5</span><span>x − y = 1</span></span></span></p>
+  <p>La solución es un <b>par de números (x ; y)</b> que hace verdaderas las dos ecuaciones. Acá es <b>(3 ; 2)</b>:</p>
+  <div class="cuenta"><span>3 + 2 = 5 ✓</span><span>3 − 2 = 1 ✓</span></div>
+  <p>El par (4 ; 1) cumple la primera (4 + 1 = 5) pero no la segunda (4 − 1 = 3, no 1). Entonces <b>no es solución</b>.</p>
+  <p class="nota">Verificar es reemplazar x e y en las DOS ecuaciones. Si falla una, no es solución.</p>
+</section>
+
+<section id="s2">
+  <h2><span class="n">2</span>Despejar y: la forma y = mx + b</h2>
+  <p>Casi todo en esta unidad arranca dejando la <b>y sola</b> de un lado. Así queda la ecuación de una recta, con su <b>pendiente m</b> (el número que multiplica a x) y su <b>ordenada b</b> (el número suelto).</p>
+  <div class="cuenta">
+    <span>2x + y = 7</span><span>y = −2x + 7</span><span class="c">El 2x pasa restando. Pendiente −2, ordenada 7.</span>
+  </div>
+  <div class="cuenta">
+    <span>3y − 6x = 9</span><span>3y = 6x + 9</span><span>y = 2x + 3</span><span class="c">El −6x pasa sumando y después se divide TODO por 3. Pendiente 2, ordenada 3.</span>
+  </div>
+  <p class="nota">Al dividir por el número de la y, se dividen todos los términos, no solo uno.</p>
+</section>
+
+<section id="s3">
+  <h2><span class="n">3</span>Método gráfico</h2>
+  <p>Cada ecuación es una recta. <b>La solución es el punto donde se cortan.</b></p>
+  <ol class="pasos">
+    <li>Despejar y en las dos ecuaciones.</li>
+    <li>Graficar cada recta: se marca la ordenada en el eje y, y desde ahí se usa la pendiente (pendiente 1 = subo 1, avanzo 1; pendiente −1 = bajo 1, avanzo 1).</li>
+    <li>Leer el punto de corte y verificarlo en las dos ecuaciones.</li>
+  </ol>
+  <p><span class="sis"><span><span>y = x + 1</span><span>y = −x + 5</span></span></span></p>
+  <figure class="solo"><svg id="g-graf" viewBox="0 0 260 260" role="img" aria-label="Rectas y = x + 1 e y = −x + 5 que se cortan en (2;3)"></svg>
+    <figcaption>Se cortan en <b>(2 ; 3)</b>. Verificación: 3 = 2 + 1 ✓ y 3 = −2 + 5 ✓.</figcaption></figure>
+</section>
+
+<section id="s4">
+  <h2><span class="n">4</span>Clasificación de sistemas</h2>
+  <p>Dos rectas pueden cortarse en un punto, ser paralelas o ser la misma recta. Cada caso tiene un nombre:</p>
+  <div class="charts">
+    <figure><svg id="g-scd" viewBox="0 0 200 200" role="img" aria-label="Dos rectas que se cortan"></svg>
+      <figcaption><b>Compatible determinado (SCD)</b><br>Se cortan en un punto. Una sola solución. Pendientes distintas.</figcaption></figure>
+    <figure><svg id="g-sci" viewBox="0 0 200 200" role="img" aria-label="Dos rectas coincidentes"></svg>
+      <figcaption><b>Compatible indeterminado (SCI)</b><br>Son la misma recta. Infinitas soluciones. Misma pendiente y misma ordenada.</figcaption></figure>
+    <figure><svg id="g-si" viewBox="0 0 200 200" role="img" aria-label="Dos rectas paralelas"></svg>
+      <figcaption><b>Incompatible (SI)</b><br>Son paralelas, nunca se cortan. Sin solución. Misma pendiente, distinta ordenada.</figcaption></figure>
+  </div>
+  <div class="tw"><table>
+    <tr><th>Pendientes</th><th>Ordenadas</th><th>Las rectas…</th><th>Sistema</th></tr>
+    <tr><td>Distintas</td><td>(no importa)</td><td>se cortan</td><td class="l">Compatible determinado</td></tr>
+    <tr><td>Iguales</td><td>Iguales</td><td>coinciden</td><td class="l">Compatible indeterminado</td></tr>
+    <tr><td>Iguales</td><td>Distintas</td><td>son paralelas</td><td class="l">Incompatible</td></tr>
+  </table></div>
+  <p>Para clasificar <b>sin resolver</b>: despejar y en las dos y comparar m y b.</p>
+  <div class="cuenta"><span>x + y = 1  →  y = −x + 1</span><span>y + x = 4  →  y = −x + 4</span><span class="c">Misma pendiente (−1), distinta ordenada (1 y 4): paralelas → incompatible.</span></div>
+  <p class="nota">“Compatible” = tiene solución. “Determinado” = una sola.</p>
+</section>
+
+<section id="s5">
+  <h2><span class="n">5</span>Método de igualación</h2>
+  <p><b>Se despeja la misma letra en las dos ecuaciones y se igualan.</b></p>
+  <p><span class="sis"><span><span>x + y = 5</span><span>x − y = 1</span></span></span></p>
+  <div class="cuenta">
+    <span class="c">1. Despejo y en las dos:</span><span>y = 5 − x        y = x − 1</span>
+    <span class="c">2. Igualo lo que quedó:</span><span>5 − x = x − 1</span>
+    <span class="c">3. Resuelvo la ecuación de una incógnita:</span><span>5 + 1 = x + x  →  6 = 2x  →  x = 3</span>
+    <span class="c">4. Reemplazo x en cualquiera de los despejes:</span><span>y = 3 − 1 = 2</span>
+    <span class="c">5. Respuesta y verificación:</span><span>(3 ; 2) → 3 + 2 = 5 ✓   3 − 2 = 1 ✓</span>
+  </div>
+</section>
+
+<section id="s6">
+  <h2><span class="n">6</span>Método de sustitución</h2>
+  <p><b>Se despeja una letra en una ecuación y se reemplaza en la otra.</b> Conviene despejar la letra que está sola, sin número adelante.</p>
+  <p><span class="sis"><span><span>x + 2y = 7</span><span>3x − y = 7</span></span></span></p>
+  <div class="cuenta">
+    <span class="c">1. Despejo x en la primera:</span><span>x = 7 − 2y</span>
+    <span class="c">2. La reemplazo en la segunda, con paréntesis:</span><span>3 · (7 − 2y) − y = 7</span>
+    <span class="c">3. Distributiva y resuelvo:</span><span>21 − 6y − y = 7  →  −7y = −14  →  y = 2</span>
+    <span class="c">4. Vuelvo al despeje:</span><span>x = 7 − 2 · 2 = 3</span>
+    <span class="c">5. Respuesta y verificación:</span><span>(3 ; 2) → 3 + 4 = 7 ✓   9 − 2 = 7 ✓</span>
+  </div>
+  <p class="nota">El paréntesis al reemplazar no se olvida nunca: 3 · (7 − 2y), no 3 · 7 − 2y.</p>
+</section>
+
+<section id="s7">
+  <h2><span class="n">7</span>Método de reducción (sumas y restas)</h2>
+  <p>Está en el programa aunque el cuadernillo no tiene ejercicios de este método. <b>Se suman o restan las dos ecuaciones para que desaparezca una letra.</b></p>
+  <p><span class="sis"><span><span>x + y = 10</span><span>x − y = 4</span></span></span></p>
+  <div class="cuenta">
+    <span class="c">Sumo las dos ecuaciones: la y se va porque hay +y y −y.</span>
+    <span>(x + y) + (x − y) = 10 + 4  →  2x = 14  →  x = 7</span>
+    <span class="c">Reemplazo en la primera:</span><span>7 + y = 10  →  y = 3</span>
+  </div>
+  <p>Si ninguna letra se cancela sola, se multiplica una ecuación antes:</p>
+  <div class="cuenta">
+    <span>2x + y = 8</span><span>x + 3y = 9   → la multiplico por 2 →   2x + 6y = 18</span>
+    <span class="c">Resto: (2x + 6y) − (2x + y) = 18 − 8</span><span>5y = 10  →  y = 2  →  2x + 2 = 8  →  x = 3</span>
+  </div>
+</section>
+
+<section id="s8">
+  <h2><span class="n">8</span>Qué pasa al resolver un sistema SCI o SI</h2>
+  <p>Si el sistema no es determinado, al resolver <b>se van las dos letras</b> y queda una igualdad entre números:</p>
+  <div class="tw"><table>
+    <tr><th>Queda…</th><th>Ejemplo</th><th>Sistema</th></tr>
+    <tr><td>algo verdadero</td><td class="mono">0 = 0</td><td class="l">Compatible indeterminado (infinitas soluciones)</td></tr>
+    <tr><td>algo falso</td><td class="mono">0 = 5</td><td class="l">Incompatible (sin solución)</td></tr>
+  </table></div>
+  <p class="nota">No es un error de cuentas: es la respuesta. Se escribe la clasificación.</p>
+</section>
+
+<section id="s9a">
+  <h2><span class="n">9</span>Problemas con sistemas</h2>
+  <ol class="pasos">
+    <li>Elegir qué es x y qué es y, y escribirlo.</li>
+    <li>Armar una ecuación con cada dato. Casi siempre hay una de “cantidades” y otra de “plata”, “patas” o “puertas”.</li>
+    <li>Resolver con el método que quieras.</li>
+    <li>Responder con una oración.</li>
+  </ol>
+  <p><b>Ejemplo.</b> “Un alfajor y una gaseosa cuestan $2100. Tres alfajores y dos gaseosas cuestan $5400. ¿Cuánto cuesta cada cosa?”</p>
+  <div class="cuenta">
+    <span class="c">a = precio del alfajor, g = precio de la gaseosa</span>
+    <span>a + g = 2100          3a + 2g = 5400</span>
+    <span class="c">Sustitución: g = 2100 − a</span>
+    <span>3a + 2 · (2100 − a) = 5400  →  3a + 4200 − 2a = 5400  →  a = 1200</span>
+    <span>g = 2100 − 1200 = 900</span>
+    <span class="c">El alfajor cuesta $1200 y la gaseosa $900.</span>
+  </div>
+</section>
+
+<section id="s9">
+  <h2><span class="n">✗</span>Errores típicos</h2>
+  <ul class="r">
+    <li><b>Verificar en una sola ecuación.</b> Tiene que dar en las dos.</li>
+    <li><b>Olvidar el paréntesis al sustituir.</b> Después la distributiva sale mal.</li>
+    <li><b>Dividir solo un término al despejar.</b> 3y = 6x + 9 → y = 2x + 3, se divide todo.</li>
+    <li><b>Encontrar x y no buscar y.</b> La solución es el par (x ; y).</li>
+    <li><b>Pensar que 0 = 0 es un error.</b> Quiere decir infinitas soluciones.</li>
+    <li><b>Confundir los nombres.</b> Compatible = tiene solución. Incompatible = no tiene.</li>
+  </ul>
+</section>
+
+<section id="ej">
+  <h2><span class="n">✓</span>Ejercicios del cuadernillo, con respuestas</h2>
+  <p>Primero resolvelos en la carpeta y después abrí la respuesta para controlar. Son los de las páginas 16 y 17 del cuadernillo.</p>
+  <div class="ejlist">
+
+  <details><summary><b>Ejercicio 2</b> · Resolver gráficamente<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th></th><th>Rectas despejadas</th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td class="l">y = −x + 5 · y = 5/2 x − 2</td><td>(2 ; 3)</td><td>SCD</td></tr>
+      <tr><td>b</td><td class="l">y = 2x + 3 · y = −1/2 x − 2</td><td>(−2 ; −1)</td><td>SCD</td></tr>
+      <tr><td>c</td><td class="l">y = 3x − 6 · y = 3x + 2</td><td>No tiene</td><td>Incompatible (paralelas)</td></tr>
+      <tr><td>d</td><td class="l">y = 2x + 1 · y = 2x + 1</td><td>Infinitas</td><td>SCI (la misma recta)</td></tr>
+    </table></div></div></details>
+
+  <details><summary><b>Ejercicio 4</b> · Clasificar mirando las pendientes<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th></th><th>Rectas despejadas</th><th>Tipo</th></tr>
+      <tr><td>a</td><td class="l">y = −x + 1 · y = −x + 4</td><td>Incompatible: misma pendiente, distinta ordenada</td></tr>
+      <tr><td>b</td><td class="l">y = −3x + 5 · y = 3x + 2</td><td>Compatible (determinado): pendientes distintas</td></tr>
+      <tr><td>c</td><td class="l">y = 1/3 x + 1/3 · y = 1/3 x + 7/3</td><td>Incompatible: misma pendiente, distinta ordenada</td></tr>
+      <tr><td>d</td><td class="l">y = 1/4 x + 2 · y = −4x + 7</td><td>Compatible (determinado): pendientes distintas</td></tr>
+    </table></div></div></details>
+
+  <details><summary><b>Ejercicio 5</b> · Verdadero o falso<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <ul class="r">
+      <li>a) <b>Falso.</b> Si las rectas tienen infinitos puntos en común, el sistema tiene infinitas soluciones.</li>
+      <li>b) <b>Falso.</b> Infinitas soluciones quiere decir que las rectas son la misma: se tocan en todos sus puntos.</li>
+      <li>c) <b>Verdadero.</b></li>
+      <li>d) <b>Verdadero.</b> Un único punto en común es una única solución.</li>
+    </ul></div></details>
+
+  <details><summary><b>Ejercicio 6</b> · Igualación<span class="tag hoy">Dom + Lun</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th></th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td>x = 3 · y = 2</td><td>SCD</td></tr>
+      <tr><td>b</td><td>Infinitas (la segunda es la primera × 5)</td><td>SCI</td></tr>
+      <tr><td>c</td><td>x = 1 · y = −4</td><td>SCD</td></tr>
+      <tr><td>d</td><td>No tiene (y = 2/3 x + 1 · y = 2/3 x − 1)</td><td>Incompatible</td></tr>
+      <tr><td>e</td><td>No tiene (y = 3/4 x + 7/4 · y = 3/4 x + 3/2)</td><td>Incompatible</td></tr>
+      <tr><td>f</td><td>x = −2/5 · y = −11/10</td><td>SCD</td></tr>
+    </table></div>
+    <p class="nota">El f da con fracciones: no es que esté mal, está hecho así.</p></div></details>
+
+  <details><summary><b>Ejercicio 8</b> · Verdadero o falso<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <ul class="r">
+      <li>a) <b>Verdadero.</b> Son paralelas.</li>
+      <li>b) <b>Falso.</b> Misma pendiente y misma ordenada es la misma recta: compatible indeterminado.</li>
+      <li>c) <b>Falso.</b> Si no tiene solución es incompatible.</li>
+      <li>d) <b>Falso.</b> Tiene una sola solución: un par (x ; y).</li>
+    </ul></div></details>
+
+  <details><summary><b>Ejercicio 1</b> · Los dos autos<span class="tag man">Lunes</span></summary><div class="sol">
+    <ul class="r">
+      <li>Primer auto: sale del km 150 y en 2 horas llega al 300, o sea avanza 75 km por hora → <span class="mono">y = 75x + 150</span>.</li>
+      <li>Segundo auto, leído del gráfico: pasa por (1 ; 150) y (6 ; 600), avanza 90 km por hora → <span class="mono">y = 90x + 60</span>.</li>
+      <li>Se encuentran donde las dos fórmulas dan lo mismo: 75x + 150 = 90x + 60 → 90 = 15x → x = 6, y = 600.</li>
+      <li><b>Se encuentran a las 6 horas de viaje, en el kilómetro 600.</b></li>
+    </ul></div></details>
+
+  <details><summary><b>Ejercicio 3</b> · Leer gráficos y clasificar<span class="tag man">Lunes</span></summary><div class="sol">
+    <ul class="r">
+      <li>a) Las rectas son paralelas → <b>incompatible</b>, sin solución.</li>
+      <li>b) Se cortan en <b>(−6 ; 0)</b> → compatible determinado.</li>
+      <li>c) f y g son la misma recta → <b>compatible indeterminado</b>, infinitas soluciones.</li>
+      <li>d) Se cortan en un solo punto → <b>compatible determinado</b>. En la copia del cuadernillo el punto exacto no se lee bien: leelo en tu hoja impresa.</li>
+    </ul></div></details>
+
+  <details><summary><b>Ejercicio 7</b> · Sustitución<span class="tag man">Lunes</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th></th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td>x = −4 · y = 2</td><td>SCD</td></tr>
+      <tr><td>b</td><td>No tiene (la primera da 10 y la otra × 3 da 15)</td><td>Incompatible</td></tr>
+      <tr><td>c</td><td>x = −3 · y = −2</td><td>SCD</td></tr>
+      <tr><td>d</td><td>x = 0 · y = −3/4</td><td>SCD</td></tr>
+      <tr><td>e</td><td>x = 6 · y = −1</td><td>SCD</td></tr>
+      <tr><td>f</td><td>Infinitas (la segunda es la primera × 3)</td><td>SCI</td></tr>
+    </table></div></div></details>
+
+  <details><summary><b>Ejercicio 9</b> · Problemas<span class="tag man">Lunes</span></summary><div class="sol">
+    <ul class="r">
+      <li>a) x − 2y = 15 · y = x/5 → <b>los números son 25 y 5</b>.</li>
+      <li>b) t + c = 5 · 250t + 890c = 2530 → <b>3 turrones y 2 chocolates</b>.</li>
+      <li>c) j = h + 24 · j + h = 42 → <b>Julián tiene 33 años y su hija 9</b>.</li>
+      <li>d) a + b = 245 · 100a + 50b = 19500 → <b>145 billetes de $100 y 100 de $50</b>.</li>
+      <li>e) d + c = 145 · 2d + 4c = 400 → <b>90 autos de dos puertas y 55 de cuatro</b>.</li>
+    </ul></div></details>
+
+  </div>
+</section>
+<footer>Guía armada a partir del cuadernillo de 3er año, Unidad IV. Las respuestas se calcularon con fracciones exactas. · <a href="../">Volver al inicio</a></footer>
+</div>
+
+<script>
+(function(){
+  const NS="http://www.w3.org/2000/svg";
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+  // plano cartesiano: rango [lo,hi] en ambos ejes, rectas {m,b,col,lab}
+  function plano(svg,lo,hi,rectas,{num=true,pts=[]}={}){
+    svg.innerHTML="";const S=+svg.viewBox.baseVal.width,pad=14,u=(S-2*pad)/(hi-lo);
+    const X=x=>pad+(x-lo)*u,Y=y=>S-pad-(y-lo)*u;
+    for(let v=lo;v<=hi;v++){svg.append(el("line",{x1:X(v),x2:X(v),y1:Y(lo),y2:Y(hi),class:"gl"}));svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(v),y2:Y(v),class:"gl"}));
+      if(num&&v!==0){svg.append(el("text",{x:X(v),y:Y(0)+11,"text-anchor":"middle"},v));svg.append(el("text",{x:X(0)-4,y:Y(v)+3,"text-anchor":"end"},v))}}
+    svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(0),y2:Y(0),class:"ax"}));svg.append(el("line",{x1:X(0),x2:X(0),y1:Y(lo),y2:Y(hi),class:"ax"}));
+    svg.append(el("text",{x:X(hi)-2,y:Y(0)-4,"text-anchor":"end"},"x"));svg.append(el("text",{x:X(0)+5,y:Y(hi)+8},"y"));
+    rectas.forEach(r=>{const xa=lo,xb=hi;svg.append(el("line",{x1:X(xa),y1:Y(r.m*xa+r.b),x2:X(xb),y2:Y(r.m*xb+r.b),stroke:css(r.col),"stroke-width":r.w||2.4,"stroke-dasharray":r.dash||"none"}));
+      if(r.lab){const lx=r.lx!=null?r.lx:hi-1.2;const t=el("text",{x:X(lx),y:Y(r.m*lx+r.b)-6,"text-anchor":"middle"},r.lab);t.style.fill=css(r.col);t.style.fontWeight="700";svg.append(t)}});
+    const clip=document.createElementNS(NS,"clipPath");
+    pts.forEach(p=>{svg.append(el("circle",{cx:X(p[0]),cy:Y(p[1]),r:4.5,fill:css("--red")}));if(p[2])svg.append(el("text",{x:X(p[0])+7,y:Y(p[1])-6},p[2]))});
+    svg.style.overflow="hidden";
+  }
+  function draw(){
+    plano(document.getElementById("g-graf"),-2,7,[{m:1,b:1,col:"--c1",lab:"y = x + 1",lx:4.6},{m:-1,b:5,col:"--c2",lab:"y = −x + 5",lx:5.2}],{pts:[[2,3,"(2;3)"]]});
+    plano(document.getElementById("g-scd"),-3,5,[{m:1,b:0,col:"--c1"},{m:-.5,b:3,col:"--c2"}],{num:false,pts:[[2,2]]});
+    plano(document.getElementById("g-sci"),-3,5,[{m:.5,b:1,col:"--c1",w:6},{m:.5,b:1,col:"--c2",w:2,dash:"6 5"}],{num:false});
+    plano(document.getElementById("g-si"),-3,5,[{m:1,b:1.5,col:"--c1"},{m:1,b:-1.5,col:"--c2"}],{num:false});
+  }
+  draw();
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw)}catch(e){}
+})();
+</script>
+</body>
+</html>

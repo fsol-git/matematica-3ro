@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulacro de Sistemas de ecuaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: hoja cuadriculada; cada ejercicio es una consigna con casilleros para completar; la corrección aparece en rojo como birome de la profe */
+:root{
+  --paper:#FAFAF6; --grid:rgba(40,80,170,.07); --card:#FFFFFF; --text:#1C2130; --muted:#5A6276;
+  --ink:#1E3A94; --ink-soft:rgba(30,58,148,.10); --red:#C2322A; --red-soft:rgba(194,50,42,.10);
+  --ok:#1F7A4F; --ok-soft:rgba(31,122,79,.12); --hl:#FFF0A0; --line:#D9DCE6;
+  --c1:#1E3A94; --c2:#E08A1E; --c3:#2E8B6E; --c4:#B04A8C;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--text);font:17px/1.55 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:780px;margin:0 auto;padding-block:28px 90px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(1.9rem,6vw,2.7rem);font-weight:800;color:var(--ink)}
+h2{font-size:1.25rem;font-weight:800;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 .n{font-family:var(--f-mono);font-size:.9rem;color:var(--red);font-weight:500}
+h2 .pts{margin-left:auto;font-family:var(--f-mono);font-size:.78rem;font-weight:500;color:var(--muted)}
+p{margin:0}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);max-width:62ch}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--ink-soft)}
+.tabs a{font-family:var(--f-display);font-weight:600;text-decoration:none;color:var(--muted);padding:8px 14px;border-radius:6px 6px 0 0;margin-bottom:-2px;border-bottom:2px solid transparent}
+.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink);background:var(--card)}
+.tabs a:focus-visible{outline:2px solid var(--ink)}
+.view{display:flex;flex-direction:column;gap:22px}
+.ej{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.ej.done-ok{border-color:var(--ok)}
+.data{font-family:var(--f-mono);font-size:.9rem;background:var(--ink-soft);border-radius:6px;padding:10px 12px;line-height:1.7;word-spacing:2px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:center;white-space:nowrap}
+th{font-family:var(--f-mono);font-weight:500;font-size:.82rem;background:var(--ink-soft);color:var(--ink)}
+td.l{text-align:left}
+input.q,select.q{font:inherit;font-family:var(--f-mono);font-size:.95rem;width:5.6em;padding:4px 6px;border:1.5px solid var(--line);border-radius:5px;background:var(--paper);color:var(--text);text-align:center}
+input.q.w{width:8em} select.q{width:auto;text-align:left;max-width:100%}
+input.q:focus,select.q:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--ink-soft)}
+.q.ok{border-color:var(--ok);background:var(--ok-soft)}
+.q.bad{border-color:var(--red);background:var(--red-soft)}
+.fix{font-family:var(--f-hand);font-size:1.3rem;color:var(--red);margin-left:6px;white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.row label{min-width:0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+@media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr);gap:4px}.grid2 label{margin-top:6px}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 .95rem var(--f-body);border-radius:6px;padding:8px 16px;cursor:pointer;border:1.5px solid var(--ink);background:var(--ink);color:var(--card)}
+button.sec{background:transparent;color:var(--ink)}
+button:focus-visible{outline:3px solid var(--ink-soft);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.res{font-weight:700}
+.res.ok{color:var(--ok)} .res.bad{color:var(--red)}
+details.pista summary{cursor:pointer;color:var(--ink);font-size:.92rem}
+details.pista p{margin-top:6px;font-size:.95rem;color:var(--muted)}
+.nota{font-family:var(--f-hand);font-size:1.35rem;line-height:1.2;color:var(--red)}
+figure{margin:0;max-width:420px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:10px var(--f-body)}
+.sis{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.95rem}
+.sis::before{content:"{";font-size:2.4em;line-height:1;font-weight:300;color:var(--ink)}
+.sis span{display:flex;flex-direction:column;line-height:1.35}
+figure{max-width:300px}
+svg .gl{stroke:var(--line)} svg .ax{stroke:var(--muted)}
+.bar{position:sticky;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);
+  padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+.timer{font-family:var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.boleta{background:var(--card);border:2px solid var(--red);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.boleta .big{font-family:var(--f-hand);font-size:3.2rem;line-height:1;color:var(--red)}
+.boleta table td{white-space:normal}
+textarea{width:100%;min-height:9em;font:13px/1.5 var(--f-mono);background:var(--paper);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px}
+.intro{display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">3er año · Unidad IV · Sistemas de ecuaciones</span>
+  <h1>Simulacro de Sistemas de ecuaciones</h1>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="#practica" data-tab="practica">Práctica</a>
+    <a href="#simulacro" data-tab="simulacro">Simulacro</a>
+  </nav>
+</header>
+
+<!-- ===================== PRÁCTICA ===================== -->
+<div class="view" id="v-practica">
+  <div class="intro">
+    <p class="lead">Doce ejercicios con datos nuevos. Cada uno se corrige por separado, y si te trabás tenés una pista. Hacé las cuentas en la carpeta y escribí acá el resultado. Se puede escribir con fracción (1/4) o con coma (0,25).</p>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P1</span>¿Es solución?</h2>
+    <p><span class="sis"><span><span>x + y = 3</span><span>2x − y = 3</span></span></span></p>
+    <div class="grid2">
+      <label>¿El par (2 ; 1) es solución?</label><select class="q sn" data-ans="si"></select>
+      <label>¿El par (1 ; 2) es solución?</label><select class="q sn" data-ans="no"></select>
+    </div>
+    <details class="pista"><summary>Pista</summary><p>Reemplazá x e y en las dos ecuaciones. Tiene que dar en las dos.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P2</span>Despejar y</h2>
+    <p>Escribí cada ecuación como y = mx + b y anotá la pendiente y la ordenada.</p>
+    <div class="tw"><table>
+      <tr><th>Ecuación</th><th>Pendiente m</th><th>Ordenada b</th></tr>
+      <tr><td class="l">2x + y = 7</td><td><input class="q" data-ans="-2"></td><td><input class="q" data-ans="7"></td></tr>
+      <tr><td class="l">3y − 6x = 9</td><td><input class="q" data-ans="2"></td><td><input class="q" data-ans="3"></td></tr>
+      <tr><td class="l">4y = x − 8</td><td><input class="q" data-ans="0.25"></td><td><input class="q" data-ans="-2"></td></tr>
+    </table></div>
+    <details class="pista"><summary>Pista</summary><p>Al final dividí TODO por el número que acompaña a la y.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P3</span>Clasificar sin resolver</h2>
+    <div class="grid2">
+      <label><span class="sis"><span><span>y = 2x + 1</span><span>y = 2x − 3</span></span></span></label><select class="q cls" data-ans="si"></select>
+      <label><span class="sis"><span><span>x + y = 4</span><span>2x + 2y = 8</span></span></span></label><select class="q cls" data-ans="sci"></select>
+      <label><span class="sis"><span><span>y = 3x − 1</span><span>y = −x + 3</span></span></span></label><select class="q cls" data-ans="scd"></select>
+      <label><span class="sis"><span><span>6x − 2y = 4</span><span>y = 3x + 5</span></span></span></label><select class="q cls" data-ans="si"></select>
+    </div>
+    <details class="pista"><summary>Pista</summary><p>Despejá y en las dos y compará: ¿misma pendiente? ¿misma ordenada?</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P4</span>Leer la solución en el gráfico</h2>
+    <figure><svg id="g-p4" viewBox="0 0 240 240" role="img" aria-label="Rectas f y g que se cortan en un punto"></svg></figure>
+    <div class="row"><label>x =</label><input class="q" data-ans="1"><label>y =</label><input class="q" data-ans="2"></div>
+    <div class="row"><label>El sistema es</label><select class="q cls" data-ans="scd"></select></div>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P5</span>Igualación</h2>
+    <p><span class="sis"><span><span>y = 2x − 1</span><span>y = −x + 5</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="2"><label>y =</label><input class="q" data-ans="3"></div>
+    <details class="pista"><summary>Pista</summary><p>Ya están despejadas: igualá 2x − 1 = −x + 5.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P6</span>Igualación (hay que despejar)</h2>
+    <p><span class="sis"><span><span>x + y = 7</span><span>x − y = 1</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="4"><label>y =</label><input class="q" data-ans="3"></div>
+    <details class="pista"><summary>Pista</summary><p>Despejá y en las dos: y = 7 − x, y = x − 1.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P7</span>Sustitución</h2>
+    <p><span class="sis"><span><span>y = 3x</span><span>2x + y = 10</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="2"><label>y =</label><input class="q" data-ans="6"></div>
+    <details class="pista"><summary>Pista</summary><p>Reemplazá la y de la segunda por 3x.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P8</span>Sustitución (hay que despejar)</h2>
+    <p><span class="sis"><span><span>x − 2y = 1</span><span>3x + y = 10</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="3"><label>y =</label><input class="q" data-ans="1"></div>
+    <details class="pista"><summary>Pista</summary><p>Despejá x en la primera: x = 1 + 2y. Reemplazala con paréntesis: 3 · (1 + 2y) + y = 10.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P9</span>Reducción (sumas y restas)</h2>
+    <p><span class="sis"><span><span>x + y = 9</span><span>x − y = 3</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="6"><label>y =</label><input class="q" data-ans="3"></div>
+    <details class="pista"><summary>Pista</summary><p>Sumá las dos ecuaciones: la y desaparece.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P10</span>Cuando se van las dos letras</h2>
+    <p>Resolvé cada uno y clasificalo.</p>
+    <div class="grid2">
+      <label><span class="sis"><span><span>2x + y = 4</span><span>4x + 2y = 8</span></span></span></label><select class="q cls" data-ans="sci"></select>
+      <label><span class="sis"><span><span>x + y = 2</span><span>x + y = 5</span></span></span></label><select class="q cls" data-ans="si"></select>
+    </div>
+    <details class="pista"><summary>Pista</summary><p>Si al final queda 0 = 0, hay infinitas soluciones. Si queda 0 = 3, no hay ninguna.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P11</span>Problema: entradas</h2>
+    <p>Para un recital se vendieron 12 entradas por $52.000. La de adulto cuesta $5000 y la de menor, $3000. ¿Cuántas de cada una se vendieron?</p>
+    <div class="row"><label>Adultos</label><input class="q" data-ans="8"><label>Menores</label><input class="q" data-ans="4"></div>
+    <details class="pista"><summary>Pista</summary><p>a + m = 12 y 5000a + 3000m = 52000.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P12</span>Problema: dos números</h2>
+    <p>Dos números suman 30 y su diferencia es 8. ¿Cuáles son?</p>
+    <div class="row"><label>El mayor</label><input class="q" data-ans="19"><label>El menor</label><input class="q" data-ans="11"></div>
+    <details class="pista"><summary>Pista</summary><p>x + y = 30 y x − y = 8. Probá con reducción.</p></details>
+  </div>
+
+  <div class="btns"><button class="sec" id="reset-p">Borrar la práctica</button></div>
+</div>
+
+<!-- ===================== SIMULACRO ===================== -->
+<div class="view" id="v-simulacro" hidden>
+  <div class="intro">
+    <p class="lead">Como en el examen: sin guía y con la carpeta al lado para hacer las cuentas. Cuando termines tocá <b>Entregar</b> y te sale la nota sobre 10.</p>
+    <p class="nota">Podés usar el método que quieras, salvo donde dice cuál.</p>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">1</span>Verificar soluciones<span class="pts">1 punto</span></h2>
+    <p><span class="sis"><span><span>2x + y = 5</span><span>x − y = 4</span></span></span></p>
+    <div class="grid2">
+      <label>¿El par (3 ; −1) es solución?</label><select class="q sn" data-ans="si"></select>
+      <label>¿El par (1 ; 3) es solución?</label><select class="q sn" data-ans="no"></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">2</span>Clasificar sin resolver<span class="pts">1,5 puntos</span></h2>
+    <div class="grid2">
+      <label>a) <span class="sis"><span><span>y = −2x + 3</span><span>4x + 2y = 6</span></span></span></label><select class="q cls" data-ans="sci"></select>
+      <label>b) <span class="sis"><span><span>y = 1/3 x + 1</span><span>x − 3y = 6</span></span></span></label><select class="q cls" data-ans="si"></select>
+      <label>c) <span class="sis"><span><span>y = 4x − 2</span><span>y = −x + 3</span></span></span></label><select class="q cls" data-ans="scd"></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">3</span>Método gráfico<span class="pts">1,5 puntos</span></h2>
+    <p>Estas son las rectas del sistema <span class="sis"><span><span>y = 2x − 1</span><span>y = −x + 5</span></span></span></p>
+    <figure><svg id="g-s3" viewBox="0 0 240 240" role="img" aria-label="Rectas y = 2x − 1 e y = −x + 5"></svg></figure>
+    <div class="row"><label>x =</label><input class="q" data-ans="2"><label>y =</label><input class="q" data-ans="3"></div>
+    <div class="row"><label>El sistema es</label><select class="q cls" data-ans="scd"></select></div>
+  </div>
+
+  <div class="ej" data-pts="2">
+    <h2><span class="n">4</span>Igualación<span class="pts">2 puntos</span></h2>
+    <p>Resolvé por igualación: <span class="sis"><span><span>x + 2y = 10</span><span>x − y = 1</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="4"><label>y =</label><input class="q" data-ans="3"></div>
+  </div>
+
+  <div class="ej" data-pts="2">
+    <h2><span class="n">5</span>Sustitución<span class="pts">2 puntos</span></h2>
+    <p>Resolvé por sustitución: <span class="sis"><span><span>y = 2x − 3</span><span>3x + 2y = 15</span></span></span></p>
+    <div class="row"><label>x =</label><input class="q" data-ans="3"><label>y =</label><input class="q" data-ans="3"></div>
+  </div>
+
+  <div class="ej" data-pts="2">
+    <h2><span class="n">6</span>Problema<span class="pts">2 puntos</span></h2>
+    <p>En un corral hay gallinas y conejos. En total se cuentan 20 cabezas y 56 patas. ¿Cuántas gallinas y cuántos conejos hay?</p>
+    <div class="grid2">
+      <label>¿Qué sistema plantea el problema? (g = gallinas, c = conejos)</label>
+      <select class="q" data-ans="b"><option value="">elegí…</option><option value="a">g + c = 56 · 2g + 4c = 20</option><option value="b">g + c = 20 · 2g + 4c = 56</option><option value="c">g + c = 20 · 4g + 2c = 56</option></select>
+    </div>
+    <div class="row"><label>Gallinas</label><input class="q" data-ans="12"><label>Conejos</label><input class="q" data-ans="8"></div>
+  </div>
+
+  <div class="boleta" id="boleta" hidden>
+    <span class="eyebrow">Resultado</span>
+    <div class="big" id="nota"></div>
+    <div class="tw"><table id="detalle"></table></div>
+    <p>Las respuestas en rojo al lado de cada casillero son las correctas. Para mandar el resultado, copialo:</p>
+    <textarea id="resumen" readonly></textarea>
+    <div class="btns"><button id="copiar">Copiar resultado</button><span id="copiado" class="res ok"></span></div>
+  </div>
+
+  <div class="bar">
+    <span class="timer" id="timer">00:00</span>
+    <div class="btns"><button class="sec" id="reset-s">Empezar de nuevo</button><button id="entregar">Entregar</button></div>
+  </div>
+</div>
+<p style="font-size:.85rem"><a href="./" style="color:var(--ink)">← Volver a la guía</a></p>
+</div>
+
+<script>
+(function(){
+  const NS="http://www.w3.org/2000/svg";
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const KEY="sim-sistemas-v1";
+
+  /* ---------- opciones repetidas ---------- */
+  const CLS=[["","elegí…"],["scd","Compatible determinado (una solución)"],["sci","Compatible indeterminado (infinitas)"],["si","Incompatible (sin solución)"]];
+  const SN=[["","elegí…"],["si","Sí"],["no","No"]];
+  const fill=(s,ops)=>ops.forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;s.append(o)});
+  document.querySelectorAll("select.cls").forEach(s=>fill(s,CLS));
+  document.querySelectorAll("select.sn").forEach(s=>fill(s,SN));
+
+  /* ---------- formato de números: fracción si no es entero ---------- */
+  function fmt(x){ if(Number.isInteger(x))return String(x);
+    for(let d=2;d<=20;d++){const n=Math.round(x*d);if(Math.abs(n/d-x)<1e-9)return n+"/"+d}
+    return String(Math.round(x*1000)/1000).replace(".",",") }
+
+  /* ---------- ids estables y guardado local ---------- */
+  document.querySelectorAll(".q").forEach((q,i)=>{q.id="q"+i; if(q.tagName==="INPUT"){q.setAttribute("inputmode","text");q.autocomplete="off"}});
+  let store={};
+  try{store=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){store={}}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+  document.querySelectorAll(".q").forEach(q=>{ if(store.v&&store.v[q.id]!=null)q.value=store.v[q.id];
+    q.addEventListener("input",()=>{store.v=store.v||{};store.v[q.id]=q.value;save();q.classList.remove("ok","bad");}) });
+
+  /* ---------- corrección: acepta enteros, coma decimal y fracciones ---------- */
+  function val(s){ s=String(s).trim().replace(/\s+/g,"").replace(/[−–]/g,"-").replace(/^[xy]=/i,"").replace(",",".");
+    let m=s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/); if(m&&Number(m[2])!==0)return Number(m[1])/Number(m[2]);
+    m=s.match(/^-?\d+(\.\d+)?$/); return m?Number(s):NaN }
+  function isOk(q){ const v=q.value.trim(); if(!v)return false;
+    if(q.tagName==="SELECT")return v===q.dataset.ans;
+    const x=val(v); return !isNaN(x)&&Math.abs(x-Number(q.dataset.ans))<=(q.dataset.tol?Number(q.dataset.tol):0.005)+1e-9 }
+  function answerText(q){ if(q.tagName==="SELECT")return q.querySelector(`option[value="${q.dataset.ans}"]`).textContent; return fmt(Number(q.dataset.ans)) }
+  function mark(q,showFix){
+    const ok=isOk(q);q.classList.toggle("ok",ok);q.classList.toggle("bad",!ok);
+    let f=q.nextElementSibling&&q.nextElementSibling.classList.contains("fix")?q.nextElementSibling:null;
+    if(showFix&&!ok){if(!f){f=document.createElement("span");f.className="fix";q.after(f)}f.textContent="→ "+answerText(q)}
+    else if(f)f.remove();
+    return ok;
+  }
+
+  /* ---------- práctica ---------- */
+  document.querySelectorAll("#v-practica [data-ej]").forEach(ej=>{
+    const bar=document.createElement("div");bar.className="btns";
+    const b=document.createElement("button");b.textContent="Corregir";
+    const s=document.createElement("button");s.textContent="Ver respuestas";s.className="sec";
+    const r=document.createElement("span");r.className="res";
+    bar.append(b,s,r);const pista=ej.querySelector("details.pista");pista?ej.insertBefore(bar,pista):ej.append(bar);
+    const qs=[...ej.querySelectorAll(".q")];
+    b.onclick=()=>{const k=qs.filter(q=>mark(q,false)).length;r.textContent=k===qs.length?"¡Todo bien!":`${k} de ${qs.length} bien`;r.className="res "+(k===qs.length?"ok":"bad");ej.classList.toggle("done-ok",k===qs.length)};
+    s.onclick=()=>{qs.forEach(q=>mark(q,true))};
+  });
+  document.getElementById("reset-p").onclick=()=>{
+    document.querySelectorAll("#v-practica .q").forEach(q=>{q.value="";q.classList.remove("ok","bad");if(store.v)delete store.v[q.id]});
+    document.querySelectorAll("#v-practica .fix").forEach(f=>f.remove());
+    document.querySelectorAll("#v-practica .res").forEach(r=>r.textContent="");
+    document.querySelectorAll("#v-practica .ej").forEach(e=>e.classList.remove("done-ok"));save();
+  };
+
+  /* ---------- simulacro ---------- */
+  const simQs=[...document.querySelectorAll("#v-simulacro .q")];
+  const ejs=[...document.querySelectorAll("#v-simulacro [data-pts]")];
+  const f1=x=>String(Math.round(x*100)/100).replace(".",",");
+  function entregar(){
+    let total=0;const filas=[];const lines=[];
+    ejs.forEach(ej=>{const qs=[...ej.querySelectorAll(".q")];const k=qs.filter(q=>mark(q,true)).length;
+      const pts=Number(ej.dataset.pts),got=Math.round(pts*k/qs.length*100)/100;total+=got;
+      const t=ej.querySelector("h2").childNodes[1].textContent.trim();const n=ej.querySelector(".n").textContent;
+      filas.push(`<tr><td>${n}</td><td class="l">${t}</td><td>${k}/${qs.length}</td><td>${f1(got)} / ${f1(pts)}</td></tr>`);
+      lines.push(`${n}. ${t}: ${f1(got)}/${f1(pts)} (${k} de ${qs.length} casilleros)`);});
+    const nota=Math.round(total*10)/10;
+    document.getElementById("nota").textContent=f1(nota)+" / 10";
+    document.getElementById("detalle").innerHTML=`<tr><th>Ej.</th><th>Tema</th><th>Bien</th><th>Puntos</th></tr>`+filas.join("");
+    const t=document.getElementById("timer").textContent;
+    document.getElementById("resumen").value=`Simulacro de Sistemas de ecuaciones — nota ${f1(nota)}/10 — tiempo ${t}\n`+lines.join("\n");
+    simQs.forEach(q=>q.disabled=true);document.getElementById("entregar").disabled=true;
+    store.entregado=true;store.nota=nota;store.tiempo=t;save();clearInterval(tid);
+    const bo=document.getElementById("boleta");bo.hidden=false;bo.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+  }
+  document.getElementById("entregar").onclick=entregar;
+  document.getElementById("reset-s").onclick=()=>{
+    simQs.forEach(q=>{q.value="";q.disabled=false;q.classList.remove("ok","bad");if(store.v)delete store.v[q.id]});
+    document.querySelectorAll("#v-simulacro .fix").forEach(f=>f.remove());
+    document.getElementById("boleta").hidden=true;document.getElementById("entregar").disabled=false;
+    delete store.entregado;delete store.inicio;save();startTimer(true);
+  };
+  document.getElementById("copiar").onclick=()=>{const ta=document.getElementById("resumen"),msg=document.getElementById("copiado");
+    const p=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(ta.value):Promise.reject();
+    p.then(()=>msg.textContent="Copiado").catch(()=>{ta.focus();ta.select();msg.textContent="Seleccionado: copialo con el menú"})};
+
+  let tid=null;
+  function startTimer(reset){ if(reset||!store.inicio){store.inicio=Date.now();save()}
+    clearInterval(tid);const el=document.getElementById("timer");
+    const tick=()=>{const s=Math.floor((Date.now()-store.inicio)/1000);el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+    tick();tid=setInterval(tick,1000)}
+
+  let restaurado=false;
+  function show(){const tab=location.hash==="#simulacro"?"simulacro":"practica";
+    document.getElementById("v-practica").hidden=tab!=="practica";document.getElementById("v-simulacro").hidden=tab!=="simulacro";
+    document.querySelectorAll(".tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===tab?"page":"false"));
+    if(tab==="simulacro"){ if(store.entregado){ if(!restaurado){restaurado=true;entregar();document.getElementById("timer").textContent=store.tiempo||""} } else startTimer(false) }}
+  window.addEventListener("hashchange",show);
+
+  /* ---------- gráficos ---------- */
+  function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+  function plano(svg,lo,hi,rectas){
+    svg.innerHTML="";svg.style.overflow="hidden";const S=+svg.viewBox.baseVal.width,pad=14,u=(S-2*pad)/(hi-lo);
+    const X=x=>pad+(x-lo)*u,Y=y=>S-pad-(y-lo)*u;
+    for(let v=lo;v<=hi;v++){svg.append(el("line",{x1:X(v),x2:X(v),y1:Y(lo),y2:Y(hi),class:"gl"}));svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(v),y2:Y(v),class:"gl"}));
+      if(v!==0){svg.append(el("text",{x:X(v),y:Y(0)+11,"text-anchor":"middle"},v));svg.append(el("text",{x:X(0)-4,y:Y(v)+3,"text-anchor":"end"},v))}}
+    svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(0),y2:Y(0),class:"ax"}));svg.append(el("line",{x1:X(0),x2:X(0),y1:Y(lo),y2:Y(hi),class:"ax"}));
+    rectas.forEach(r=>{svg.append(el("line",{x1:X(lo),y1:Y(r.m*lo+r.b),x2:X(hi),y2:Y(r.m*hi+r.b),stroke:css(r.col),"stroke-width":2.4}));
+      const t=el("text",{x:X(r.lx)+6,y:Y(r.m*r.lx+r.b)},r.lab);t.style.fill=css(r.col);t.style.fontWeight="700";t.style.fontSize="12px";svg.append(t)});
+  }
+  function draw(){
+    plano(document.getElementById("g-p4"),-2,6,[{m:1,b:1,col:"--c1",lab:"f",lx:4.3},{m:-2,b:4,col:"--c2",lab:"g",lx:2.6}]);
+    plano(document.getElementById("g-s3"),-2,6,[{m:2,b:-1,col:"--c1",lab:"y = 2x − 1",lx:3.1},{m:-1,b:5,col:"--c2",lab:"y = −x + 5",lx:0.6}]);
+  }
+  draw();
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw)}catch(e){}
+  show();
+})();
+</script>
+</body>
+</html>
