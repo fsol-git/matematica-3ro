@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulacro de Estadística</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: hoja cuadriculada; cada ejercicio es una consigna con casilleros para completar; la corrección aparece en rojo como birome de la profe */
+:root{
+  --paper:#FAFAF6; --grid:rgba(40,80,170,.07); --card:#FFFFFF; --text:#1C2130; --muted:#5A6276;
+  --ink:#1E3A94; --ink-soft:rgba(30,58,148,.10); --red:#C2322A; --red-soft:rgba(194,50,42,.10);
+  --ok:#1F7A4F; --ok-soft:rgba(31,122,79,.12); --hl:#FFF0A0; --line:#D9DCE6;
+  --c1:#1E3A94; --c2:#E08A1E; --c3:#2E8B6E; --c4:#B04A8C;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--text);font:17px/1.55 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:780px;margin:0 auto;padding-block:28px 90px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(1.9rem,6vw,2.7rem);font-weight:800;color:var(--ink)}
+h2{font-size:1.25rem;font-weight:800;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 .n{font-family:var(--f-mono);font-size:.9rem;color:var(--red);font-weight:500}
+h2 .pts{margin-left:auto;font-family:var(--f-mono);font-size:.78rem;font-weight:500;color:var(--muted)}
+p{margin:0}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);max-width:62ch}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--ink-soft)}
+.tabs a{font-family:var(--f-display);font-weight:600;text-decoration:none;color:var(--muted);padding:8px 14px;border-radius:6px 6px 0 0;margin-bottom:-2px;border-bottom:2px solid transparent}
+.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink);background:var(--card)}
+.tabs a:focus-visible{outline:2px solid var(--ink)}
+.view{display:flex;flex-direction:column;gap:22px}
+.ej{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.ej.done-ok{border-color:var(--ok)}
+.data{font-family:var(--f-mono);font-size:.9rem;background:var(--ink-soft);border-radius:6px;padding:10px 12px;line-height:1.7;word-spacing:2px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:center;white-space:nowrap}
+th{font-family:var(--f-mono);font-weight:500;font-size:.82rem;background:var(--ink-soft);color:var(--ink)}
+td.l{text-align:left}
+input.q,select.q{font:inherit;font-family:var(--f-mono);font-size:.95rem;width:5.6em;padding:4px 6px;border:1.5px solid var(--line);border-radius:5px;background:var(--paper);color:var(--text);text-align:center}
+input.q.w{width:8em} select.q{width:auto;text-align:left;max-width:100%}
+input.q:focus,select.q:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--ink-soft)}
+.q.ok{border-color:var(--ok);background:var(--ok-soft)}
+.q.bad{border-color:var(--red);background:var(--red-soft)}
+.fix{font-family:var(--f-hand);font-size:1.3rem;color:var(--red);margin-left:6px;white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.row label{min-width:0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+@media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr);gap:4px}.grid2 label{margin-top:6px}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 .95rem var(--f-body);border-radius:6px;padding:8px 16px;cursor:pointer;border:1.5px solid var(--ink);background:var(--ink);color:var(--card)}
+button.sec{background:transparent;color:var(--ink)}
+button:focus-visible{outline:3px solid var(--ink-soft);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.res{font-weight:700}
+.res.ok{color:var(--ok)} .res.bad{color:var(--red)}
+details.pista summary{cursor:pointer;color:var(--ink);font-size:.92rem}
+details.pista p{margin-top:6px;font-size:.95rem;color:var(--muted)}
+.nota{font-family:var(--f-hand);font-size:1.35rem;line-height:1.2;color:var(--red)}
+figure{margin:0;max-width:420px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:11px var(--f-body)}
+svg .gl{stroke:var(--line)} svg .ax{stroke:var(--muted)}
+.bar{position:sticky;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);
+  padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+.timer{font-family:var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.boleta{background:var(--card);border:2px solid var(--red);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.boleta .big{font-family:var(--f-hand);font-size:3.2rem;line-height:1;color:var(--red)}
+.boleta table td{white-space:normal}
+textarea{width:100%;min-height:9em;font:13px/1.5 var(--f-mono);background:var(--paper);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px}
+.intro{display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">3er año · Unidad V · Estadística</span>
+  <h1>Simulacro de Estadística</h1>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="#practica" data-tab="practica">Práctica</a>
+    <a href="#simulacro" data-tab="simulacro">Simulacro</a>
+  </nav>
+</header>
+
+<!-- ===================== PRÁCTICA ===================== -->
+<div class="view" id="v-practica">
+  <div class="intro">
+    <p class="lead">Diez ejercicios con datos nuevos. Cada uno se corrige por separado, y si te trabás tenés una pista. Los decimales van con coma (0,45) y los intervalos se escriben como en la carpeta: [10;20).</p>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P1</span>Población, muestra y variable</h2>
+    <p>“Se encuestó a 200 alumnos de las escuelas secundarias de Morón para saber cuántas horas por día usan el celular.”</p>
+    <div class="grid2">
+      <label>Población</label><select class="q" data-ans="b"><option value="">elegí…</option><option value="a">Los 200 alumnos encuestados</option><option value="b">Los alumnos de las secundarias de Morón</option><option value="c">Las horas de uso del celular</option></select>
+      <label>Muestra</label><select class="q" data-ans="a"><option value="">elegí…</option><option value="a">Los 200 alumnos encuestados</option><option value="b">Los alumnos de las secundarias de Morón</option><option value="c">Las horas de uso del celular</option></select>
+      <label>Variable</label><select class="q" data-ans="c"><option value="">elegí…</option><option value="a">Los 200 alumnos encuestados</option><option value="b">Los alumnos de las secundarias de Morón</option><option value="c">Las horas de uso del celular</option></select>
+      <label>La variable es…</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+    </div>
+    <details class="pista"><summary>Pista</summary><p>La muestra es la que tiene el número. La variable es lo que se quiere saber de cada uno.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P2</span>Cualitativa o cuantitativa</h2>
+    <div class="grid2">
+      <label>Color de ojos</label><select class="q" data-ans="cuali"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Cantidad de hermanos</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Altura en cm</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Deporte favorito</label><select class="q" data-ans="cuali"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Goles en un partido</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Barrio donde vive</label><select class="q" data-ans="cuali"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+    </div>
+    <details class="pista"><summary>Pista</summary><p>¿La respuesta es un número? Entonces es cuantitativa.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P3</span>Tabla de frecuencias</h2>
+    <p>Se preguntó a 20 alumnos cómo llegan a la escuela: Colectivo (C), Caminando (P), Auto (A), Bici (B).</p>
+    <div class="data">C, P, C, A, C, B, P, C, A, C, P, C, B, C, A, P, C, C, A, P</div>
+    <div class="tw"><table>
+      <tr><th>Medio</th><th>f</th><th>fr</th><th>%</th><th>F</th></tr>
+      <tr><td class="l">Colectivo</td><td><input class="q" data-ans="9"></td><td><input class="q" data-ans="0.45"></td><td><input class="q" data-ans="45"></td><td><input class="q" data-ans="9"></td></tr>
+      <tr><td class="l">Caminando</td><td><input class="q" data-ans="5"></td><td><input class="q" data-ans="0.25"></td><td><input class="q" data-ans="25"></td><td><input class="q" data-ans="14"></td></tr>
+      <tr><td class="l">Auto</td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="0.2"></td><td><input class="q" data-ans="20"></td><td><input class="q" data-ans="18"></td></tr>
+      <tr><td class="l">Bici</td><td><input class="q" data-ans="2"></td><td><input class="q" data-ans="0.1"></td><td><input class="q" data-ans="10"></td><td><input class="q" data-ans="20"></td></tr>
+    </table></div>
+    <div class="row"><label>Moda:</label><select class="q" data-ans="c"><option value="">elegí…</option><option value="c">Colectivo</option><option value="p">Caminando</option><option value="a">Auto</option><option value="b">Bici</option></select></div>
+    <details class="pista"><summary>Pista</summary><p>fr = f ÷ 20. % = fr × 100. F se va sumando: 9, 9 + 5…</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P4</span>Media, mediana y moda (cantidad par)</h2>
+    <p>Goles que hizo un equipo en 12 partidos:</p>
+    <div class="data">2, 0, 1, 3, 1, 4, 2, 1, 0, 2, 1, 5</div>
+    <div class="row"><label>Media</label><input class="q" data-ans="1.83" data-tol="0.02"><label>Mediana</label><input class="q" data-ans="1.5"><label>Moda</label><input class="q w" data-set="1"></div>
+    <details class="pista"><summary>Pista</summary><p>Son 12 datos, así que la mediana es el promedio del 6° y el 7° una vez ordenados.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P5</span>Media, mediana y moda (cantidad impar)</h2>
+    <p>Horas que estudió un alumno cada día durante 9 días:</p>
+    <div class="data">7, 3, 8, 5, 7, 9, 5, 6, 4</div>
+    <div class="row"><label>Media</label><input class="q" data-ans="6"><label>Mediana</label><input class="q" data-ans="6"><label>Moda</label><input class="q w" data-set="5,7" placeholder="ej: 3 y 4"></div>
+    <details class="pista"><summary>Pista</summary><p>Fijate bien la moda: hay un empate.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P6</span>Tabla con intervalos</h2>
+    <p>Minutos que tardan 25 alumnos en llegar a la escuela:</p>
+    <div class="data">5, 12, 18, 25, 8, 15, 22, 35, 14, 9, 17, 28, 11, 19, 42, 13, 24, 16, 7, 31, 21, 15, 26, 38, 12</div>
+    <div class="tw"><table>
+      <tr><th>Minutos</th><th>f</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[0 ; 10)</td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="5"></td></tr>
+      <tr><td>[10 ; 20)</td><td><input class="q" data-ans="11"></td><td><input class="q" data-ans="15"></td><td><input class="q" data-ans="15"></td></tr>
+      <tr><td>[20 ; 30)</td><td><input class="q" data-ans="6"></td><td><input class="q" data-ans="21"></td><td><input class="q" data-ans="25"></td></tr>
+      <tr><td>[30 ; 40)</td><td><input class="q" data-ans="3"></td><td><input class="q" data-ans="24"></td><td><input class="q" data-ans="35"></td></tr>
+      <tr><td>[40 ; 50)</td><td><input class="q" data-ans="1"></td><td><input class="q" data-ans="25"></td><td><input class="q" data-ans="45"></td></tr>
+    </table></div>
+    <div class="grid2">
+      <label>Promedio usando la tabla (xₙ · f)</label><input class="q" data-ans="19.4" data-tol="0.05">
+      <label>Intervalo modal</label><input class="q w" data-int="10,20" placeholder="[a;b)">
+      <label>Intervalo de la mediana</label><input class="q w" data-int="10,20" placeholder="[a;b)">
+    </div>
+    <details class="pista"><summary>Pista</summary><p>Promedio: (5·4 + 15·11 + 25·6 + 35·3 + 45·1) ÷ 25. La mediana es el dato 25 ÷ 2 = 12,5: buscá la primera F que llegue a 13.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P7</span>Porcentajes y grados</h2>
+    <p>Deporte favorito de 40 alumnos. Completá y después dibujá el gráfico circular en la carpeta.</p>
+    <div class="tw"><table>
+      <tr><th>Deporte</th><th>f</th><th>%</th><th>Grados</th></tr>
+      <tr><td class="l">Fútbol</td><td>18</td><td><input class="q" data-ans="45"></td><td><input class="q" data-ans="162"></td></tr>
+      <tr><td class="l">Vóley</td><td>10</td><td><input class="q" data-ans="25"></td><td><input class="q" data-ans="90"></td></tr>
+      <tr><td class="l">Hockey</td><td>8</td><td><input class="q" data-ans="20"></td><td><input class="q" data-ans="72"></td></tr>
+      <tr><td class="l">Básquet</td><td>4</td><td><input class="q" data-ans="10"></td><td><input class="q" data-ans="36"></td></tr>
+    </table></div>
+    <details class="pista"><summary>Pista</summary><p>Grados = f ÷ 40 × 360. Tienen que sumar 360.</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P8</span>Leer un gráfico de barras</h2>
+    <p>Cantidad de libros que leyeron en el año los alumnos de un curso.</p>
+    <figure><svg id="g-libros" viewBox="0 0 340 220" role="img" aria-label="Gráfico de barras: 0 libros 4 alumnos, 1 libro 7, 2 libros 9, 3 libros 6, 4 libros 4"></svg></figure>
+    <div class="grid2">
+      <label>¿Cuántos alumnos hay en el curso?</label><input class="q" data-ans="30">
+      <label>¿Cuántos leyeron menos de 3 libros?</label><input class="q" data-ans="20">
+      <label>Moda</label><input class="q" data-ans="2">
+      <label>Media</label><input class="q" data-ans="1.97" data-tol="0.02">
+      <label>Mediana</label><input class="q" data-ans="2">
+    </div>
+    <details class="pista"><summary>Pista</summary><p>Media = (0·4 + 1·7 + 2·9 + 3·6 + 4·4) ÷ 30. Para la mediana, con 30 datos buscá el 15° y el 16° acumulando: 4, 11, 20…</p></details>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P9</span>¿Se puede calcular?</h2>
+    <p>Se registró el color de ojos de 30 alumnos.</p>
+    <div class="grid2">
+      <label>¿Se puede calcular la media?</label><select class="q" data-ans="no"><option value="">elegí…</option><option value="si">Sí</option><option value="no">No</option></select>
+      <label>¿Y la mediana?</label><select class="q" data-ans="no"><option value="">elegí…</option><option value="si">Sí</option><option value="no">No</option></select>
+      <label>¿Y la moda?</label><select class="q" data-ans="si"><option value="">elegí…</option><option value="si">Sí</option><option value="no">No</option></select>
+    </div>
+  </div>
+
+  <div class="ej" data-ej>
+    <h2><span class="n">P10</span>Tabla al revés</h2>
+    <p>Se preguntó a un grupo si tienen hermanos. 18 dijeron que no, y eso es el 30% del total.</p>
+    <div class="tw"><table>
+      <tr><th>¿Hermanos?</th><th>f</th><th>fr</th><th>%</th></tr>
+      <tr><td>Sí</td><td><input class="q" data-ans="42"></td><td><input class="q" data-ans="0.7"></td><td><input class="q" data-ans="70"></td></tr>
+      <tr><td>No</td><td>18</td><td><input class="q" data-ans="0.3"></td><td>30%</td></tr>
+      <tr><td>Total</td><td><input class="q" data-ans="60"></td><td>1</td><td>100%</td></tr>
+    </table></div>
+    <details class="pista"><summary>Pista</summary><p>Si 18 es el 30%, el 10% es 6. ¿Cuánto es el 100%?</p></details>
+  </div>
+
+  <div class="btns"><button class="sec" id="reset-p">Borrar la práctica</button></div>
+</div>
+
+<!-- ===================== SIMULACRO ===================== -->
+<div class="view" id="v-simulacro" hidden>
+  <div class="intro">
+    <p class="lead">Como en el examen: sin guía, sin calculadora del celular si en el examen no la dejan usar, y con la carpeta al lado para hacer cuentas. Cuando termines tocá <b>Entregar</b> y te sale la nota sobre 10.</p>
+    <p class="nota">Decimales con coma. Intervalos como [a;b). Si hay dos modas, escribí las dos.</p>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">1</span>Población, muestra y variable<span class="pts">1 punto</span></h2>
+    <p>“En un club de Lanús se pesó a 60 de los 400 socios infantiles para estudiar su peso.”</p>
+    <div class="grid2">
+      <label>Población</label><select class="q" data-ans="b"><option value="">elegí…</option><option value="a">Los 60 chicos pesados</option><option value="b">Los 400 socios infantiles del club</option><option value="c">El peso</option></select>
+      <label>Muestra</label><select class="q" data-ans="a"><option value="">elegí…</option><option value="a">Los 60 chicos pesados</option><option value="b">Los 400 socios infantiles del club</option><option value="c">El peso</option></select>
+      <label>Variable</label><select class="q" data-ans="c"><option value="">elegí…</option><option value="a">Los 60 chicos pesados</option><option value="b">Los 400 socios infantiles del club</option><option value="c">El peso</option></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">2</span>Clasificar variables<span class="pts">1 punto</span></h2>
+    <div class="grid2">
+      <label>Marca de celular</label><select class="q" data-ans="cuali"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Mensajes enviados por día</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Temperatura máxima del día</label><select class="q" data-ans="cuanti"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+      <label>Materia preferida</label><select class="q" data-ans="cuali"><option value="">elegí…</option><option value="cuali">Cualitativa</option><option value="cuanti">Cuantitativa</option></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="2">
+    <h2><span class="n">3</span>Tabla de frecuencias<span class="pts">2 puntos</span></h2>
+    <p>Gusto de helado elegido por 25 personas: Chocolate (Ch), Dulce de leche (D), Frutilla (F), Limón (L).</p>
+    <div class="data">D, Ch, D, F, Ch, D, L, D, Ch, F, D, Ch, D, L, F, D, Ch, D, F, D, Ch, L, D, Ch, D</div>
+    <div class="tw"><table>
+      <tr><th>Gusto</th><th>f</th><th>fr</th><th>%</th><th>F</th></tr>
+      <tr><td class="l">Chocolate</td><td><input class="q" data-ans="7"></td><td><input class="q" data-ans="0.28"></td><td><input class="q" data-ans="28"></td><td><input class="q" data-ans="7"></td></tr>
+      <tr><td class="l">Dulce de leche</td><td><input class="q" data-ans="11"></td><td><input class="q" data-ans="0.44"></td><td><input class="q" data-ans="44"></td><td><input class="q" data-ans="18"></td></tr>
+      <tr><td class="l">Frutilla</td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="0.16"></td><td><input class="q" data-ans="16"></td><td><input class="q" data-ans="22"></td></tr>
+      <tr><td class="l">Limón</td><td><input class="q" data-ans="3"></td><td><input class="q" data-ans="0.12"></td><td><input class="q" data-ans="12"></td><td><input class="q" data-ans="25"></td></tr>
+    </table></div>
+    <div class="row"><label>Moda:</label><select class="q" data-ans="d"><option value="">elegí…</option><option value="ch">Chocolate</option><option value="d">Dulce de leche</option><option value="f">Frutilla</option><option value="l">Limón</option></select></div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">4</span>Media, mediana y moda<span class="pts">1,5 puntos</span></h2>
+    <p>Temperaturas máximas (en °C) de 11 días de octubre:</p>
+    <div class="data">18, 21, 20, 18, 23, 25, 20, 19, 22, 20, 24</div>
+    <div class="grid2">
+      <label>Media (con dos decimales)</label><input class="q" data-ans="20.91" data-tol="0.06">
+      <label>Mediana</label><input class="q" data-ans="20">
+      <label>Moda</label><input class="q w" data-set="20">
+      <label>¿Cuántos días superaron la media?</label><input class="q" data-ans="5">
+    </div>
+  </div>
+
+  <div class="ej" data-pts="2.5">
+    <h2><span class="n">5</span>Datos agrupados<span class="pts">2,5 puntos</span></h2>
+    <p>Edades de las 40 personas que fueron a una charla.</p>
+    <div class="tw"><table>
+      <tr><th>Edad</th><th>f</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[10 ; 20)</td><td>4</td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="15"></td></tr>
+      <tr><td>[20 ; 30)</td><td>15</td><td><input class="q" data-ans="19"></td><td><input class="q" data-ans="25"></td></tr>
+      <tr><td>[30 ; 40)</td><td>12</td><td><input class="q" data-ans="31"></td><td><input class="q" data-ans="35"></td></tr>
+      <tr><td>[40 ; 50)</td><td>7</td><td><input class="q" data-ans="38"></td><td><input class="q" data-ans="45"></td></tr>
+      <tr><td>[50 ; 60)</td><td>2</td><td><input class="q" data-ans="40"></td><td><input class="q" data-ans="55"></td></tr>
+    </table></div>
+    <div class="grid2">
+      <label>Promedio de edad</label><input class="q" data-ans="32" data-tol="0.05">
+      <label>Intervalo modal</label><input class="q w" data-int="20,30" placeholder="[a;b)">
+      <label>Moda</label><input class="q" data-ans="25">
+      <label>Intervalo que contiene la mediana</label><input class="q w" data-int="30,40" placeholder="[a;b)">
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">6</span>Gráfico circular<span class="pts">1 punto</span></h2>
+    <p>Medio de transporte de 60 empleados. Calculá el porcentaje y los grados de cada porción. El gráfico dibujalo en la hoja (no se corrige acá).</p>
+    <div class="tw"><table>
+      <tr><th>Medio</th><th>f</th><th>%</th><th>Grados</th></tr>
+      <tr><td class="l">Colectivo</td><td>30</td><td><input class="q" data-ans="50"></td><td><input class="q" data-ans="180"></td></tr>
+      <tr><td class="l">Tren</td><td>15</td><td><input class="q" data-ans="25"></td><td><input class="q" data-ans="90"></td></tr>
+      <tr><td class="l">Auto</td><td>12</td><td><input class="q" data-ans="20"></td><td><input class="q" data-ans="72"></td></tr>
+      <tr><td class="l">Bici</td><td>3</td><td><input class="q" data-ans="5"></td><td><input class="q" data-ans="18"></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">7</span>Leer un gráfico<span class="pts">1 punto</span></h2>
+    <p>Se preguntó a un grupo de personas cuál es su red social preferida.</p>
+    <figure><svg id="g-redes" viewBox="0 0 340 200" role="img" aria-label="Gráfico circular: Instagram 45%, TikTok sin dato, WhatsApp 20%, YouTube 10%"></svg></figure>
+    <div class="grid2">
+      <label>¿Qué porcentaje eligió TikTok?</label><input class="q" data-ans="25">
+      <label>Si 24 personas eligieron WhatsApp, ¿cuántas fueron encuestadas?</label><input class="q" data-ans="120">
+      <label>¿Cuántas eligieron Instagram?</label><input class="q" data-ans="54">
+    </div>
+  </div>
+
+  <div class="boleta" id="boleta" hidden>
+    <span class="eyebrow">Resultado</span>
+    <div class="big" id="nota"></div>
+    <div class="tw"><table id="detalle"></table></div>
+    <p>Las respuestas en rojo al lado de cada casillero son las correctas. Para mandar el resultado, copialo:</p>
+    <textarea id="resumen" readonly></textarea>
+    <div class="btns"><button id="copiar">Copiar resultado</button><span id="copiado" class="res ok"></span></div>
+  </div>
+
+  <div class="bar">
+    <span class="timer" id="timer">00:00</span>
+    <div class="btns"><button class="sec" id="reset-s">Empezar de nuevo</button><button id="entregar">Entregar</button></div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  const NS="http://www.w3.org/2000/svg";
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const KEY="sim-estad-v1";
+  const fmt=x=>String(Math.round(x*1000)/1000).replace(".",",");
+
+  /* ---------- ids estables y guardado local ---------- */
+  document.querySelectorAll(".q").forEach((q,i)=>{q.id="q"+i; if(q.tagName==="INPUT"){q.setAttribute("inputmode",q.dataset.int||q.dataset.set?"text":"decimal");q.autocomplete="off"}});
+  let store={};
+  try{store=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){store={}}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+  document.querySelectorAll(".q").forEach(q=>{ if(store.v&&store.v[q.id]!=null)q.value=store.v[q.id];
+    q.addEventListener("input",()=>{store.v=store.v||{};store.v[q.id]=q.value;save();q.classList.remove("ok","bad");}) });
+
+  /* ---------- corrección ---------- */
+  const nums=s=>(String(s).replace(/(\d),(\d)/g,"$1.$2").match(/-?\d+(\.\d+)?/g)||[]).map(Number);
+  function isOk(q){
+    const v=q.value.trim(); if(!v)return false;
+    if(q.tagName==="SELECT")return v===q.dataset.ans;
+    if(q.dataset.int){const [a,b]=q.dataset.int.split(",").map(Number);const n=nums(v);return n.length===2&&n[0]===a&&n[1]===b}
+    if(q.dataset.set){const want=q.dataset.set.split(",").map(Number).sort((a,b)=>a-b);const got=[...new Set(nums(v))].sort((a,b)=>a-b);return got.length===want.length&&got.every((x,i)=>Math.abs(x-want[i])<1e-9)}
+    const n=nums(v.replace("%","").replace("°",""));if(n.length!==1)return false;
+    const tol=q.dataset.tol?Number(q.dataset.tol):0.005;return Math.abs(n[0]-Number(q.dataset.ans))<=tol+1e-9;
+  }
+  function answerText(q){
+    if(q.tagName==="SELECT")return q.querySelector(`option[value="${q.dataset.ans}"]`).textContent;
+    if(q.dataset.int){const [a,b]=q.dataset.int.split(",");return `[${a};${b})`}
+    if(q.dataset.set)return q.dataset.set.split(",").join(" y ");
+    return fmt(Number(q.dataset.ans));
+  }
+  function mark(q,showFix){
+    const ok=isOk(q);q.classList.toggle("ok",ok);q.classList.toggle("bad",!ok);
+    let f=q.nextElementSibling&&q.nextElementSibling.classList.contains("fix")?q.nextElementSibling:null;
+    if(showFix&&!ok){if(!f){f=document.createElement("span");f.className="fix";q.after(f)}f.textContent="→ "+answerText(q)}
+    else if(f)f.remove();
+    return ok;
+  }
+
+  /* ---------- práctica: corregir por ejercicio ---------- */
+  document.querySelectorAll("#v-practica [data-ej]").forEach(ej=>{
+    const bar=document.createElement("div");bar.className="btns";
+    const b=document.createElement("button");b.textContent="Corregir";
+    const s=document.createElement("button");s.textContent="Ver respuestas";s.className="sec";
+    const r=document.createElement("span");r.className="res";
+    bar.append(b,s,r);const pista=ej.querySelector("details.pista");pista?ej.insertBefore(bar,pista):ej.append(bar);
+    const qs=[...ej.querySelectorAll(".q")];
+    b.onclick=()=>{const k=qs.filter(q=>mark(q,false)).length;r.textContent=k===qs.length?"¡Todo bien!":`${k} de ${qs.length} bien`;r.className="res "+(k===qs.length?"ok":"bad");ej.classList.toggle("done-ok",k===qs.length)};
+    s.onclick=()=>{qs.forEach(q=>mark(q,true))};
+  });
+  document.getElementById("reset-p").onclick=()=>{
+    document.querySelectorAll("#v-practica .q").forEach(q=>{q.value="";q.classList.remove("ok","bad");if(store.v)delete store.v[q.id]});
+    document.querySelectorAll("#v-practica .fix").forEach(f=>f.remove());
+    document.querySelectorAll("#v-practica .res").forEach(r=>r.textContent="");
+    document.querySelectorAll("#v-practica .ej").forEach(e=>e.classList.remove("done-ok"));save();
+  };
+
+  /* ---------- simulacro ---------- */
+  const simQs=[...document.querySelectorAll("#v-simulacro .q")];
+  const ejs=[...document.querySelectorAll("#v-simulacro [data-pts]")];
+  function entregar(){
+    let total=0;const filas=[];const lines=[];
+    ejs.forEach(ej=>{const qs=[...ej.querySelectorAll(".q")];const k=qs.filter(q=>mark(q,true)).length;
+      const pts=Number(ej.dataset.pts),got=Math.round(pts*k/qs.length*100)/100;total+=got;
+      const t=ej.querySelector("h2").childNodes[1].textContent.trim();const n=ej.querySelector(".n").textContent;
+      filas.push(`<tr><td>${n}</td><td class="l">${t}</td><td>${k}/${qs.length}</td><td>${fmt(got)} / ${fmt(pts)}</td></tr>`);
+      lines.push(`${n}. ${t}: ${fmt(got)}/${fmt(pts)} (${k} de ${qs.length} casilleros)`);});
+    const nota=Math.round(total*10)/10;
+    document.getElementById("nota").textContent=fmt(nota)+" / 10";
+    document.getElementById("detalle").innerHTML=`<tr><th>Ej.</th><th>Tema</th><th>Bien</th><th>Puntos</th></tr>`+filas.join("");
+    const t=document.getElementById("timer").textContent;
+    document.getElementById("resumen").value=`Simulacro de Estadística — nota ${fmt(nota)}/10 — tiempo ${t}\n`+lines.join("\n");
+    simQs.forEach(q=>q.disabled=true);document.getElementById("entregar").disabled=true;
+    store.entregado=true;store.nota=nota;store.tiempo=t;save();stopTimer();
+    const bo=document.getElementById("boleta");bo.hidden=false;bo.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+  }
+  document.getElementById("entregar").onclick=entregar;
+  document.getElementById("reset-s").onclick=()=>{
+    simQs.forEach(q=>{q.value="";q.disabled=false;q.classList.remove("ok","bad");if(store.v)delete store.v[q.id]});
+    document.querySelectorAll("#v-simulacro .fix").forEach(f=>f.remove());
+    document.getElementById("boleta").hidden=true;document.getElementById("entregar").disabled=false;
+    delete store.entregado;delete store.inicio;save();startTimer(true);
+  };
+  document.getElementById("copiar").onclick=()=>{const ta=document.getElementById("resumen"),msg=document.getElementById("copiado");
+    const p=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(ta.value):Promise.reject();
+    p.then(()=>msg.textContent="Copiado").catch(()=>{ta.focus();ta.select();msg.textContent="Seleccionado: copialo con el menú"})};
+
+  /* ---------- cronómetro ---------- */
+  let tid=null;
+  function startTimer(reset){ if(reset||!store.inicio){store.inicio=Date.now();save()}
+    clearInterval(tid);const el=document.getElementById("timer");
+    const tick=()=>{const s=Math.floor((Date.now()-store.inicio)/1000);el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+    tick();tid=setInterval(tick,1000)}
+  function stopTimer(){clearInterval(tid)}
+
+  /* ---------- pestañas ---------- */
+  function show(){const tab=location.hash==="#simulacro"?"simulacro":"practica";
+    document.getElementById("v-practica").hidden=tab!=="practica";document.getElementById("v-simulacro").hidden=tab!=="simulacro";
+    document.querySelectorAll(".tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===tab?"page":"false"));
+    if(tab==="simulacro"){ if(store.entregado){entregarRestaurado()} else startTimer(false) }}
+  let restaurado=false;
+  function entregarRestaurado(){ if(restaurado)return;restaurado=true;entregar();document.getElementById("timer").textContent=store.tiempo||"" }
+  window.addEventListener("hashchange",show);
+
+  /* ---------- gráficos ---------- */
+  function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+  function draw(){
+    const s=document.getElementById("g-libros");s.innerHTML="";const L=34,T=14,w=340,h=220,B=40,ph=h-T-B,pw=w-L-10,m=10,vals=[4,7,9,6,4];
+    for(let v=0;v<=m;v+=1){const y=T+ph-ph*v/m;s.append(el("line",{x1:L,x2:w-10,y1:y,y2:y,class:"gl"}));if(v%2===0)s.append(el("text",{x:L-6,y:y+4,"text-anchor":"end"},v))}
+    const slot=pw/5,bw=slot*.55;vals.forEach((v,i)=>{const x=L+i*slot+(slot-bw)/2;s.append(el("rect",{x,y:T+ph-ph*v/m,width:bw,height:ph*v/m,fill:css("--c1")}));
+      s.append(el("text",{x:x+bw/2,y:h-B+16,"text-anchor":"middle"},i))});
+    s.append(el("line",{x1:L,x2:w-10,y1:T+ph,y2:T+ph,class:"ax"}));s.append(el("line",{x1:L,x2:L,y1:T,y2:T+ph,class:"ax"}));
+    s.append(el("text",{x:L+pw/2,y:h-6,"text-anchor":"middle"},"Cantidad de libros"));s.append(el("text",{x:2,y:T-2},"Alumnos"));
+    const p=document.getElementById("g-redes");p.innerHTML="";const data=[["Instagram",45,"45%"],["TikTok",25,"?"],["WhatsApp",20,"20%"],["YouTube",10,"10%"]];
+    const cols=["--c1","--c2","--c3","--c4"];let a0=-Math.PI/2;const cx=95,cy=100,r=85;
+    data.forEach(([n,v,lab],i)=>{const a1=a0+2*Math.PI*v/100,lg=(a1-a0)>Math.PI?1:0;
+      p.append(el("path",{d:`M${cx},${cy} L${cx+r*Math.cos(a0)},${cy+r*Math.sin(a0)} A${r},${r} 0 ${lg} 1 ${cx+r*Math.cos(a1)},${cy+r*Math.sin(a1)} Z`,fill:css(cols[i]),stroke:css("--card"),"stroke-width":2}));
+      const y=50+i*28;p.append(el("rect",{x:200,y:y-10,width:12,height:12,fill:css(cols[i])}));p.append(el("text",{x:218,y},`${n}: ${lab}`));a0=a1;});
+  }
+  draw();
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw)}catch(e){}
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+  show();
+})();
+</script>
+
+</body>
+</html>

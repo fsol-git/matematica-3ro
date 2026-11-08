@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Estadística Unidad V</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: una hoja de carpeta cuadriculada, una columna de lectura, notas de la profe en rojo al margen */
+:root{
+  --paper:#FAFAF6; --grid:rgba(40,80,170,.07); --card:#FFFFFF; --text:#1C2130; --muted:#5A6276;
+  --ink:#1E3A94; --ink-soft:rgba(30,58,148,.10); --red:#C2322A; --hl:#FFF0A0; --line:#D9DCE6;
+  --c1:#1E3A94; --c2:#E08A1E; --c3:#2E8B6E; --c4:#B04A8C; --c5:#7A8597;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; --c5:#9AA2B5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; --c5:#9AA2B5; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--text);font:17px/1.6 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px}
+.wrap{max-width:760px;margin:0 auto;padding-block:32px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;color:var(--ink)}
+h2{font-size:1.6rem;font-weight:800;display:flex;gap:12px;align-items:baseline}
+h2 .n{font-family:var(--f-mono);font-size:.95rem;color:var(--red);font-weight:500}
+h3{font-size:1.12rem;font-weight:600}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.1rem;color:var(--muted);max-width:60ch}
+header{display:flex;flex-direction:column;gap:12px}
+.plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.plan div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.plan b{font-family:var(--f-display);color:var(--ink)}
+.plan span{font-size:.92rem;color:var(--muted);line-height:1.4}
+@media (max-width:560px){.plan{grid-template-columns:1fr}}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav a{font-size:.88rem;color:var(--ink);text-decoration:none;border:1px solid var(--ink-soft);background:var(--card);border-radius:99px;padding:4px 12px}
+nav a:hover,nav a:focus-visible{background:var(--ink-soft);outline:none}
+.def{background:var(--card);border-left:3px solid var(--ink);padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.def p b{color:var(--ink)}
+.nota{font-family:var(--f-hand);font-size:1.45rem;line-height:1.2;color:var(--red);transform:rotate(-.6deg);padding-left:4px}
+mark{background:var(--hl);color:inherit;padding:0 3px;border-radius:2px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;background:var(--card);font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border:1px solid var(--line);padding:6px 12px;text-align:center;white-space:nowrap}
+th{font-family:var(--f-mono);font-weight:500;font-size:.85rem;background:var(--ink-soft);color:var(--ink)}
+td.l{text-align:left}
+tr.tot td{font-weight:700}
+.mono{font-family:var(--f-mono);font-size:.92em}
+.formula{font-family:var(--f-mono);background:var(--card);border:1px dashed var(--ink);border-radius:6px;padding:10px 14px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.pasos{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:560px){.charts{grid-template-columns:1fr}}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px}
+figcaption{font-size:.85rem;color:var(--muted)}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:11px var(--f-body)}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .gl{stroke:var(--line);stroke-width:1}
+.vtipo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.vtipo{grid-template-columns:1fr}}
+.vtipo div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.vtipo b{font-family:var(--f-display)}
+.vtipo span{font-size:.92rem;color:var(--muted)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px}
+summary{cursor:pointer;padding:12px 16px;display:flex;gap:10px;align-items:center;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font-family:var(--f-mono);color:var(--ink);width:1em}
+details[open] summary::before{content:"−"}
+summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tag{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:2px 8px;margin-left:auto;white-space:nowrap}
+.tag.hoy{background:var(--ink);color:var(--card)}
+.tag.man{border:1px solid var(--ink);color:var(--ink)}
+.sol{padding:0 16px 16px 40px;display:flex;flex-direction:column;gap:10px}
+.ejlist{display:flex;flex-direction:column;gap:8px}
+ul.r{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+footer{font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">3er año · Unidad V</span>
+  <h1>Estadística, de cero al martes</h1>
+  <p class="lead">Todo lo que entra en el examen, explicado con ejemplos chicos. Al final están los 11 ejercicios del cuadernillo con sus respuestas, para controlar lo que hagas.</p>
+  <div class="plan">
+    <div><b>Domingo</b><span>Leer las secciones 1 a 7. Hacer los ejercicios 1, 2, 3, 5, 7 y 8.</span></div>
+    <div><b>Lunes</b><span>Ejercicios 4, 6, 9, 10 y 11. Después, la práctica nueva.</span></div>
+    <div><b>Lunes a la noche</b><span>Simulacro de examen, sin mirar la guía.</span><a href="simulacro.html" style="color:var(--ink);font-weight:700">Abrir práctica y simulacro →</a></div>
+  </div>
+  <nav>
+    <a href="#s1">Población y muestra</a><a href="#s2">Variables</a><a href="#s3">Tabla de frecuencias</a>
+    <a href="#s4">Media, mediana, moda</a><a href="#s5">Intervalos</a><a href="#s6">Datos agrupados</a>
+    <a href="#s7">Gráficos</a><a href="#s8">Errores típicos</a><a href="#ej">Ejercicios</a>
+  </nav>
+</header>
+
+<section id="s1">
+  <h2><span class="n">1</span>Población, muestra y variable</h2>
+  <p>La estadística estudia a un grupo grande juntando datos. Como casi nunca se puede preguntarle a todos, se elige una parte.</p>
+  <div class="def">
+    <p><b>Población:</b> el grupo completo que se quiere estudiar.</p>
+    <p><b>Muestra:</b> la parte de la población que realmente se estudió. Casi siempre tiene un número.</p>
+    <p><b>Variable:</b> lo que se mide o se pregunta a cada uno.</p>
+  </div>
+  <p><b>Ejemplo.</b> “Se encuestó a 150 alumnos de las escuelas de Morón para saber cuántas horas duermen.”</p>
+  <div class="tw"><table>
+    <tr><th>Población</th><th>Muestra</th><th>Variable</th></tr>
+    <tr><td class="l">Alumnos de las escuelas de Morón</td><td class="l">Los 150 encuestados</td><td class="l">Horas que duermen</td></tr>
+  </table></div>
+  <p class="nota">Truco: la muestra es la que tiene el número. La variable suele aparecer después de “para saber…” o “se registró…”.</p>
+</section>
+
+<section id="s2">
+  <h2><span class="n">2</span>Tipos de variable</h2>
+  <div class="vtipo">
+    <div><b>Cualitativa</b><span>La respuesta es una palabra o categoría. No se puede sumar.</span><span>Ej.: color preferido, nacionalidad, bebida, deporte.</span></div>
+    <div><b>Cuantitativa</b><span>La respuesta es un número que se cuenta o se mide.</span><span>Ej.: edad, peso, cantidad de hermanos, temperatura.</span></div>
+  </div>
+  <p>Si la profe pide más detalle, las cuantitativas se dividen en dos:</p>
+  <ul class="r">
+    <li><b>Discreta:</b> se cuenta, va de a saltos (cantidad de hijos: 0, 1, 2… nunca 1,5).</li>
+    <li><b>Continua:</b> se mide, puede tener decimales (peso, altura, tiempo).</li>
+  </ul>
+  <p class="nota">Pregunta clave: ¿la respuesta es un número? Sí → cuantitativa. No → cualitativa.</p>
+</section>
+
+<section id="s3">
+  <h2><span class="n">3</span>Tabla de frecuencias</h2>
+  <p>Ordena los datos para no tener que mirar una lista larga. Ejemplo: le preguntamos a 20 chicos su fruta preferida.</p>
+  <p class="mono">M, B, M, N, M, P, B, M, N, B, M, B, M, N, B, M, P, B, N, M</p>
+  <div class="tw"><table>
+    <tr><th>Fruta</th><th>f</th><th>fr</th><th>%</th><th>F</th></tr>
+    <tr><td class="l">Manzana (M)</td><td>8</td><td>0,40</td><td>40%</td><td>8</td></tr>
+    <tr><td class="l">Banana (B)</td><td>6</td><td>0,30</td><td>30%</td><td>14</td></tr>
+    <tr><td class="l">Naranja (N)</td><td>4</td><td>0,20</td><td>20%</td><td>18</td></tr>
+    <tr><td class="l">Pera (P)</td><td>2</td><td>0,10</td><td>10%</td><td>20</td></tr>
+    <tr class="tot"><td class="l">Total</td><td>20</td><td>1</td><td>100%</td><td></td></tr>
+  </table></div>
+  <div class="def">
+    <p><b>f (frecuencia absoluta):</b> cuántas veces aparece. Se cuenta.</p>
+    <p><b>fr (frecuencia relativa):</b> <span class="mono">f ÷ total</span>. Ej.: 8 ÷ 20 = 0,40.</p>
+    <p><b>Porcentaje:</b> <span class="mono">fr × 100</span>. Ej.: 0,40 × 100 = 40%.</p>
+    <p><b>F (frecuencia acumulada):</b> se va sumando la f de arriba hacia abajo: 8, 8+6 = 14, 14+4 = 18, 18+2 = 20.</p>
+  </div>
+  <p class="nota">Controles: la f suma el total, la fr suma 1, el % suma 100 y la última F es igual al total.</p>
+</section>
+
+<section id="s4">
+  <h2><span class="n">4</span>Media, mediana y moda</h2>
+  <p>Son tres formas de decir cuál es el valor “del medio” o “típico” de los datos. Ejemplo: cantidad de goles en 5 partidos.</p>
+  <p class="mono">3, 8, 4, 10, 4</p>
+  <h3>Media (el promedio)</h3>
+  <p>Se suman todos y se divide por la cantidad de datos.</p>
+  <div class="formula">(3 + 8 + 4 + 10 + 4) ÷ 5 = 29 ÷ 5 = 5,8</div>
+  <h3>Mediana (el del medio)</h3>
+  <ol class="pasos">
+    <li><mark>Primero se ordenan los datos</mark> de menor a mayor: 3, 4, <b>4</b>, 8, 10.</li>
+    <li>Si la cantidad es impar, la mediana es el del medio: <b>4</b>.</li>
+    <li>Si la cantidad es par, se promedian los dos del medio. Con 3, 4, <b>4, 8</b>, 10, 12 la mediana es (4 + 8) ÷ 2 = 6.</li>
+  </ol>
+  <h3>Moda (la que más se repite)</h3>
+  <p>En 3, 8, 4, 10, 4 la moda es <b>4</b>, que aparece dos veces.</p>
+  <ul class="r">
+    <li>Si dos valores empatan como los más repetidos, hay <b>dos modas</b> (se dice “bimodal”). Se escriben las dos.</li>
+    <li>Si ninguno se repite, no hay moda.</li>
+  </ul>
+  <p class="nota">La mediana sin ordenar es el error más común del examen.</p>
+  <p><b>Con variables cualitativas</b> (fruta, mascota, bebida) solo se puede calcular la <b>moda</b>. No se puede sumar “gato + perro”, así que no hay media, y no hay un orden de menor a mayor, así que tampoco hay mediana.</p>
+</section>
+
+<section id="s5">
+  <h2><span class="n">5</span>Intervalos de clase</h2>
+  <p>Cuando hay muchos valores distintos (edades, pesos, notas), contar cada uno por separado deja una tabla enorme. Entonces se agrupan en <b>intervalos</b> del mismo ancho.</p>
+  <div class="def">
+    <p><b>[40 ; 45)</b> quiere decir “desde 40 hasta 45, <mark>sin incluir el 45</mark>”. El corchete <span class="mono">[</span> incluye el número; el paréntesis <span class="mono">)</span> lo deja afuera.</p>
+    <p>Un dato de 45 va en el intervalo siguiente, <b>[45 ; 50)</b>.</p>
+  </div>
+  <p><b>Cómo armar los intervalos:</b></p>
+  <ol class="pasos">
+    <li>Buscar el dato más chico y el más grande. Ej.: edades de 40 a 64.</li>
+    <li>Elegir un ancho cómodo (5, 10…) y arrancar en un número redondo: [40;45), [45;50), [50;55), [55;60), [60;65).</li>
+    <li>Contar cuántos datos caen en cada intervalo. Conviene ir tachando los datos de la lista para no contar dos veces.</li>
+  </ol>
+  <p><b>Marca de clase</b> (en el cuadernillo figura como <span class="mono">xₙ</span>): el punto medio del intervalo. Representa a todos los datos de ese intervalo.</p>
+  <div class="formula">marca de clase = (límite inferior + límite superior) ÷ 2 → [40;45) → (40 + 45) ÷ 2 = 42,5</div>
+</section>
+
+<section id="s6">
+  <h2><span class="n">6</span>Media, moda y mediana con datos agrupados</h2>
+  <p>Ejemplo: estatura de 30 alumnos, en cm.</p>
+  <div class="tw"><table>
+    <tr><th>Estatura</th><th>f</th><th>F</th><th>xₙ</th><th>xₙ · f</th></tr>
+    <tr><td>[145 ; 150)</td><td>3</td><td>3</td><td>147,5</td><td>442,5</td></tr>
+    <tr><td>[150 ; 155)</td><td>7</td><td>10</td><td>152,5</td><td>1067,5</td></tr>
+    <tr><td>[155 ; 160)</td><td><b>10</b></td><td><mark>20</mark></td><td>157,5</td><td>1575</td></tr>
+    <tr><td>[160 ; 165)</td><td>6</td><td>26</td><td>162,5</td><td>975</td></tr>
+    <tr><td>[165 ; 170)</td><td>4</td><td>30</td><td>167,5</td><td>670</td></tr>
+    <tr class="tot"><td>Total</td><td>30</td><td></td><td></td><td>4730</td></tr>
+  </table></div>
+  <h3>Media (promedio)</h3>
+  <p>Se multiplica cada marca de clase por su f, se suma todo y se divide por el total.</p>
+  <div class="formula">media = (suma de xₙ · f) ÷ total = 4730 ÷ 30 ≈ 157,67 cm</div>
+  <h3>Intervalo modal y moda</h3>
+  <p>El intervalo modal es el de <b>mayor f</b>: [155 ; 160), con 10. La moda se toma como su marca de clase: <b>157,5 cm</b>.</p>
+  <h3>Mediana y su intervalo</h3>
+  <ol class="pasos">
+    <li>Se divide el total por 2: 30 ÷ 2 = 15. Buscamos el dato número 15.</li>
+    <li>Se mira la columna <b>F</b> y se busca el primer valor que llega a 15 o lo pasa. F = 3 y F = 10 no llegan; <mark>F = 20 sí</mark>.</li>
+    <li>La mediana está en el intervalo <b>[155 ; 160)</b>.</li>
+  </ol>
+  <p class="nota">El intervalo modal se busca en la columna f; el de la mediana, en la columna F. No confundirlas.</p>
+</section>
+
+<section id="s7">
+  <h2><span class="n">7</span>Gráficos</h2>
+  <p>Los tres del programa, con los datos de las frutas y de las estaturas.</p>
+  <div class="charts">
+    <figure><svg id="g-barras" viewBox="0 0 320 210" role="img" aria-label="Gráfico de barras de fruta preferida"></svg>
+      <figcaption><b>Barras:</b> una barra por categoría, separadas entre sí. La altura es la f. Sirve para cualquier variable.</figcaption></figure>
+    <figure><svg id="g-torta" viewBox="0 0 320 210" role="img" aria-label="Gráfico circular de fruta preferida"></svg>
+      <figcaption><b>Circular:</b> cada porción es un porcentaje del total. Se dibuja con transportador.</figcaption></figure>
+  </div>
+  <h3>Cómo calcular los grados del gráfico circular</h3>
+  <p>El círculo completo tiene 360°. Cada categoría se lleva su parte:</p>
+  <div class="formula">grados = fr × 360 → Manzana: 0,40 × 360 = 144°</div>
+  <div class="tw"><table>
+    <tr><th>Fruta</th><th>f</th><th>fr</th><th>%</th><th>Grados</th></tr>
+    <tr><td class="l">Manzana</td><td>8</td><td>0,40</td><td>40%</td><td>144°</td></tr>
+    <tr><td class="l">Banana</td><td>6</td><td>0,30</td><td>30%</td><td>108°</td></tr>
+    <tr><td class="l">Naranja</td><td>4</td><td>0,20</td><td>20%</td><td>72°</td></tr>
+    <tr><td class="l">Pera</td><td>2</td><td>0,10</td><td>10%</td><td>36°</td></tr>
+    <tr class="tot"><td class="l">Total</td><td>20</td><td>1</td><td>100%</td><td>360°</td></tr>
+  </table></div>
+  <p class="nota">Control: los grados tienen que sumar 360.</p>
+  <figure><svg id="g-histo" viewBox="0 0 420 220" role="img" aria-label="Histograma de estaturas"></svg>
+    <figcaption><b>Histograma:</b> es para datos en intervalos. Las barras van <b>pegadas</b>, porque un intervalo termina donde empieza el siguiente. En el eje de abajo van los límites de los intervalos.</figcaption></figure>
+  <p><b>Leer un gráfico</b> también entra. Si un gráfico circular dice que el 15% son 30 personas, el total sale de una regla de tres:</p>
+  <div class="formula">15% → 30 personas · 100% → 30 × 100 ÷ 15 = 200 personas</div>
+</section>
+
+<section id="s8">
+  <h2><span class="n">8</span>Errores típicos</h2>
+  <ul class="r">
+    <li><b>Calcular la mediana sin ordenar los datos.</b> Siempre ordenar primero.</li>
+    <li><b>Con cantidad par, elegir uno solo como mediana.</b> Son los dos del medio, promediados.</li>
+    <li><b>Dejar una sola moda cuando hay empate.</b> Si dos valores se repiten lo mismo, van las dos.</li>
+    <li><b>Contar mal un dato que cae justo en el límite.</b> 45 no entra en [40;45), va en [45;50).</li>
+    <li><b>Sacar media o mediana de una variable cualitativa.</b> Solo tiene moda.</li>
+    <li><b>Dejar el histograma con barras separadas.</b> En el histograma van pegadas.</li>
+    <li><b>Olvidarse los controles.</b> La f suma el total, la fr suma 1, los % suman 100, los grados suman 360.</li>
+  </ul>
+</section>
+
+<section id="ej">
+  <h2><span class="n">✓</span>Ejercicios del cuadernillo, con respuestas</h2>
+  <p>Primero resolvelos en la carpeta y después abrí la respuesta para controlar. Las páginas son las del cuadernillo (18 a 21).</p>
+  <div class="ejlist">
+
+  <details><summary><b>Ejercicio 1</b> · Población, muestra y variable<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th></th><th>Población</th><th>Muestra</th><th>Variable</th></tr>
+      <tr><td>a</td><td class="l">Árboles de la provincia de Bs. As.</td><td class="l">3000 árboles</td><td class="l">Especie (cualitativa)</td></tr>
+      <tr><td>b</td><td class="l">Pacientes menores de 12 años del centro</td><td class="l">50 pacientes</td><td class="l">Tiempo de internación (cuantitativa)</td></tr>
+      <tr><td>c</td><td class="l">Libros de la Biblioteca Nacional</td><td class="l">700 libros</td><td class="l">Peso en gramos (cuantitativa)</td></tr>
+      <tr><td>d</td><td class="l">Habitantes de la Argentina</td><td class="l">4000 habitantes</td><td class="l">Destino turístico (cualitativa)</td></tr>
+    </table></div></div></details>
+
+  <details><summary><b>Ejercicio 2</b> · Cualitativa o cuantitativa<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <div class="tw"><table>
+      <tr><th>Variable</th><th>Tipo</th></tr>
+      <tr><td class="l">Peso de los bebés</td><td>Cuantitativa (continua)</td></tr>
+      <tr><td class="l">Cantidad de hijos por empleado</td><td>Cuantitativa (discreta)</td></tr>
+      <tr><td class="l">Bebida preferida</td><td>Cualitativa</td></tr>
+      <tr><td class="l">Cantidad de botellas tomadas</td><td>Cuantitativa (discreta)</td></tr>
+      <tr><td class="l">Edad de los jugadores</td><td>Cuantitativa</td></tr>
+      <tr><td class="l">Nacionalidad de los estudiantes</td><td>Cualitativa</td></tr>
+    </table></div></div></details>
+
+  <details><summary><b>Ejercicio 3</b> · Tablas de frecuencias<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <p><b>a) Sectores</b> (20 empleados)</p>
+    <div class="tw"><table>
+      <tr><th>Sector</th><th>f</th><th>fr</th><th>%</th><th>F</th></tr>
+      <tr><td class="l">Ventas (V)</td><td>6</td><td>0,30</td><td>30%</td><td>6</td></tr>
+      <tr><td class="l">Recursos humanos (RH)</td><td>4</td><td>0,20</td><td>20%</td><td>10</td></tr>
+      <tr><td class="l">Secretaría (S)</td><td>5</td><td>0,25</td><td>25%</td><td>15</td></tr>
+      <tr><td class="l">Administración (A)</td><td>5</td><td>0,25</td><td>25%</td><td>20</td></tr>
+      <tr class="tot"><td class="l">Total</td><td>20</td><td>1</td><td>100%</td><td></td></tr>
+    </table></div>
+    <p><b>b) Votación</b> (30 votos)</p>
+    <div class="tw"><table>
+      <tr><th>Candidato</th><th>f</th><th>fr</th><th>%</th><th>F</th></tr>
+      <tr><td class="l">Andrés (A)</td><td>9</td><td>0,30</td><td>30%</td><td>9</td></tr>
+      <tr><td class="l">Bárbara (B)</td><td>5</td><td>0,17</td><td>16,7%</td><td>14</td></tr>
+      <tr><td class="l">Carla (C)</td><td>10</td><td>0,33</td><td>33,3%</td><td>24</td></tr>
+      <tr><td class="l">Darío (D)</td><td>6</td><td>0,20</td><td>20%</td><td>30</td></tr>
+      <tr class="tot"><td class="l">Total</td><td>30</td><td>1</td><td>100%</td><td></td></tr>
+    </table></div>
+    <p>Ganó Carla, con 10 votos.</p></div></details>
+
+  <details><summary><b>Ejercicio 5</b> · Media, mediana y moda<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <p><b>a) Temperaturas</b> (15 días). Ordenadas: 25, 25, 26, 27, 27, 28, 28, <b>28</b>, 29, 30, 30, 30, 31, 32, 34.</p>
+    <ul class="r"><li>Media: 430 ÷ 15 ≈ <b>28,67°</b></li><li>Mediana: el 8° dato, <b>28°</b></li><li>Moda: <b>28° y 30°</b> (los dos aparecen 3 veces, es bimodal)</li></ul>
+    <p><b>b) Notas</b> (20 alumnos). Ordenadas: 3, 3, 4, 4, 5, 5, 6, 6, 6, <b>6, 6</b>, 7, 7, 7, 8, 8, 8, 9, 9, 10.</p>
+    <ul class="r"><li>Media: 127 ÷ 20 = <b>6,35</b></li><li>Mediana: promedio del 10° y el 11°, (6 + 6) ÷ 2 = <b>6</b></li><li>Moda: <b>6</b> (aparece 5 veces)</li></ul></div></details>
+
+  <details><summary><b>Ejercicio 7</b> · Mascotas<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <ul class="r"><li>a) 25 + 15 + 5 + 5 = <b>50 personas</b>.</li>
+    <li>b y c)</li></ul>
+    <div class="tw"><table>
+      <tr><th>Mascota</th><th>f</th><th>%</th><th>Grados</th></tr>
+      <tr><td class="l">Gatos</td><td>25</td><td>50%</td><td>180°</td></tr>
+      <tr><td class="l">Perros</td><td>15</td><td>30%</td><td>108°</td></tr>
+      <tr><td class="l">Peces</td><td>5</td><td>10%</td><td>36°</td></tr>
+      <tr><td class="l">Pájaros</td><td>5</td><td>10%</td><td>36°</td></tr>
+    </table></div>
+    <ul class="r"><li>d) Moda: <b>gato</b>.</li>
+    <li>e) <b>No</b> se puede calcular ni la media ni la mediana: la variable es cualitativa. No se pueden sumar animales ni ordenarlos de menor a mayor.</li></ul></div></details>
+
+  <details><summary><b>Ejercicio 8</b> · Bebidas preferidas<span class="tag hoy">Domingo</span></summary><div class="sol">
+    <ul class="r"><li>a) 100% − 50% − 15% − 5% = <b>30%</b> eligió agua saborizada.</li>
+    <li>b) 15% son 30 clientes → 30 × 100 ÷ 15 = <b>200 encuestados</b>.</li></ul></div></details>
+
+  <details><summary><b>Ejercicio 4</b> · Tablas con intervalos<span class="tag man">Lunes</span></summary><div class="sol">
+    <p>Los intervalos los elige cada uno, así que puede salir distinto. Estas son unas opciones razonables.</p>
+    <p><b>a) Notas</b> (30 alumnos, de 1 a 9)</p>
+    <div class="tw"><table><tr><th>Nota</th><th>f</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[1 ; 3)</td><td>1</td><td>1</td><td>2</td></tr><tr><td>[3 ; 5)</td><td>6</td><td>7</td><td>4</td></tr>
+      <tr><td>[5 ; 7)</td><td>11</td><td>18</td><td>6</td></tr><tr><td>[7 ; 9)</td><td>9</td><td>27</td><td>8</td></tr>
+      <tr><td>[9 ; 11)</td><td>3</td><td>30</td><td>10</td></tr></table></div>
+    <p><b>b) Edades</b> (30 pacientes, de 40 a 64)</p>
+    <div class="tw"><table><tr><th>Edad</th><th>f</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[40 ; 45)</td><td>3</td><td>3</td><td>42,5</td></tr><tr><td>[45 ; 50)</td><td>8</td><td>11</td><td>47,5</td></tr>
+      <tr><td>[50 ; 55)</td><td>4</td><td>15</td><td>52,5</td></tr><tr><td>[55 ; 60)</td><td>8</td><td>23</td><td>57,5</td></tr>
+      <tr><td>[60 ; 65)</td><td>7</td><td>30</td><td>62,5</td></tr></table></div>
+    <p><b>c) Pesos</b> (42 chicos, de 45,3 a 74,9 kg)</p>
+    <div class="tw"><table><tr><th>Peso</th><th>f</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[45 ; 50)</td><td>9</td><td>9</td><td>47,5</td></tr><tr><td>[50 ; 55)</td><td>3</td><td>12</td><td>52,5</td></tr>
+      <tr><td>[55 ; 60)</td><td>13</td><td>25</td><td>57,5</td></tr><tr><td>[60 ; 65)</td><td>4</td><td>29</td><td>62,5</td></tr>
+      <tr><td>[65 ; 70)</td><td>4</td><td>33</td><td>67,5</td></tr><tr><td>[70 ; 75)</td><td>9</td><td>42</td><td>72,5</td></tr></table></div>
+  </div></details>
+
+  <details><summary><b>Ejercicio 6</b> · Edades en un evento<span class="tag man">Lunes</span></summary><div class="sol">
+    <div class="tw"><table><tr><th>Edad</th><th>f</th><th>F</th><th>xₙ</th><th>xₙ · f</th></tr>
+      <tr><td>[24 ; 32)</td><td>108</td><td>108</td><td>28</td><td>3024</td></tr>
+      <tr><td>[32 ; 40)</td><td>76</td><td>184</td><td>36</td><td>2736</td></tr>
+      <tr><td>[40 ; 48)</td><td>40</td><td>224</td><td>44</td><td>1760</td></tr>
+      <tr><td>[48 ; 56)</td><td>64</td><td>288</td><td>52</td><td>3328</td></tr>
+      <tr><td>[56 ; 64)</td><td>16</td><td>304</td><td>60</td><td>960</td></tr>
+      <tr class="tot"><td>Total</td><td>304</td><td></td><td></td><td>11808</td></tr></table></div>
+    <ul class="r"><li>b) Promedio: 11808 ÷ 304 ≈ <b>38,84 años</b>.</li>
+    <li>c) Intervalo modal: <b>[24 ; 32)</b>, el de f = 108. Moda: <b>28 años</b>.</li>
+    <li>d) 304 ÷ 2 = 152. La primera F que llega a 152 es 184, así que la mediana está en <b>[32 ; 40)</b>.</li></ul></div></details>
+
+  <details><summary><b>Ejercicio 9</b> · Ramales de tren<span class="tag man">Lunes</span></summary><div class="sol">
+    <ul class="r"><li>a) Ramal 1: Sarmiento · Ramal 2: Mitre a Suárez · Ramal 3: Roca a Varela · Ramal 4: Roca a Korn (no tiene barras) · Ramal 5: Mitre a Tigre · Ramal 6: San Martín. Se reconocen comparando la barra de papel, que es la más alta de cada grupo.</li>
+    <li>b) 14.880 + 19.680 + 10.895 + 27.552 + 7.541 = <b>80.548 kg</b> de papel por día.</li>
+    <li>c) <b>Gráfico 3.</b> Sumando los dos ramales del Mitre da casi el 62% de todo el material, más de la mitad del círculo. Los gráficos 1 y 2 le dan al Mitre justo la mitad.</li></ul></div></details>
+
+  <details><summary><b>Ejercicio 10</b> · Días de lluvia<span class="tag man">Lunes</span></summary><div class="sol">
+    <p>Si “No” es el 75%, “Sí” es el 25%. Si 23 días son el 25%, el total es 23 × 4 = 92 días.</p>
+    <div class="tw"><table><tr><th>Lluvia</th><th>f</th><th>fr</th><th>%</th></tr>
+      <tr><td>Sí</td><td>23</td><td>0,25</td><td>25%</td></tr><tr><td>No</td><td>69</td><td>0,75</td><td>75%</td></tr>
+      <tr class="tot"><td>Total</td><td>92</td><td>1</td><td>100%</td></tr></table></div></div></details>
+
+  <details><summary><b>Ejercicio 11</b> · Paquetes de frutillas<span class="tag man">Lunes</span></summary><div class="sol">
+    <p class="nota">Ojo: hay un paquete de 1,85 kg y el último intervalo es [1,80 ; 1,85), que no lo incluye. Preguntale a la profe cómo lo tomó. Abajo está con ese dato sumado al último intervalo.</p>
+    <div class="tw"><table><tr><th>Peso</th><th>f</th><th>fr</th><th>F</th><th>xₙ</th></tr>
+      <tr><td>[1,60 ; 1,65)</td><td>7</td><td>0,27</td><td>7</td><td>1,625</td></tr>
+      <tr><td>[1,65 ; 1,70)</td><td>7</td><td>0,27</td><td>14</td><td>1,675</td></tr>
+      <tr><td>[1,70 ; 1,75)</td><td>6</td><td>0,23</td><td>20</td><td>1,725</td></tr>
+      <tr><td>[1,75 ; 1,80)</td><td>2</td><td>0,08</td><td>22</td><td>1,775</td></tr>
+      <tr><td>[1,80 ; 1,85]</td><td>4</td><td>0,15</td><td>26</td><td>1,825</td></tr>
+      <tr class="tot"><td>Total</td><td>26</td><td>1</td><td></td><td></td></tr></table></div>
+    <ul class="r"><li>b) Promedio ≈ <b>1,70 kg</b> (con la tabla da 1,704; sumando los 26 datos uno por uno, 1,705).</li>
+    <li>c) <b>20 paquetes</b> pesan menos de 1,75 kg (es la F del tercer intervalo).</li>
+    <li>d) <b>11 paquetes</b> pesan más que el promedio.</li>
+    <li>e) Mediana: con 26 datos ordenados, el 13° y el 14° son 1,69 y 1,69 → <b>1,69 kg</b>. Con la tabla, 26 ÷ 2 = 13 cae en <b>[1,65 ; 1,70)</b>.</li>
+    <li>f) Histograma: 5 barras pegadas con alturas 7, 7, 6, 2 y 4.</li></ul></div></details>
+
+  </div>
+</section>
+<footer>Guía armada a partir del cuadernillo de 3er año, Unidad V. Las respuestas se calcularon con los datos del cuadernillo.</footer>
+</div>
+
+<script>
+(function(){
+  const NS="http://www.w3.org/2000/svg";
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+  function barras(svg,labels,vals,{w=320,h=210,pegadas=false,edges=null,max=null,col="--c1"}={}){
+    svg.innerHTML="";const L=34,R=10,T=12,B=34,pw=w-L-R,ph=h-T-B;
+    const m=max||Math.ceil(Math.max(...vals)/2)*2;const step=m<=12?2:5;
+    for(let v=0;v<=m;v+=step){const y=T+ph-ph*v/m;svg.append(el("line",{x1:L,x2:w-R,y1:y,y2:y,class:"gl"}));svg.append(el("text",{x:L-6,y:y+4,"text-anchor":"end"},v))}
+    const n=vals.length,slot=pw/n,bw=pegadas?slot:slot*.6;
+    vals.forEach((v,i)=>{const x=L+i*slot+(slot-bw)/2,bh=ph*v/m;
+      svg.append(el("rect",{x,y:T+ph-bh,width:bw,height:bh,fill:css(col),stroke:pegadas?css("--card"):"none","stroke-width":pegadas?1:0}));
+      if(!edges)svg.append(el("text",{x:x+bw/2,y:h-B+16,"text-anchor":"middle"},labels[i]));});
+    if(edges)edges.forEach((e,i)=>svg.append(el("text",{x:L+i*slot,y:h-B+16,"text-anchor":"middle"},e)));
+    svg.append(el("line",{x1:L,x2:w-R,y1:T+ph,y2:T+ph,class:"ax"}));svg.append(el("line",{x1:L,x2:L,y1:T,y2:T+ph,class:"ax"}));
+    svg.append(el("text",{x:L-28,y:T+4},"f"));
+  }
+  function torta(svg,labels,vals){
+    svg.innerHTML="";const tot=vals.reduce((a,b)=>a+b,0),cx=100,cy=105,r=90;let a0=-Math.PI/2;
+    const cols=["--c1","--c2","--c3","--c4","--c5"];
+    vals.forEach((v,i)=>{const a1=a0+2*Math.PI*v/tot,lg=(a1-a0)>Math.PI?1:0;
+      const d=`M${cx},${cy} L${cx+r*Math.cos(a0)},${cy+r*Math.sin(a0)} A${r},${r} 0 ${lg} 1 ${cx+r*Math.cos(a1)},${cy+r*Math.sin(a1)} Z`;
+      svg.append(el("path",{d,fill:css(cols[i]),stroke:css("--card"),"stroke-width":2}));
+      const y=40+i*26;svg.append(el("rect",{x:212,y:y-10,width:12,height:12,fill:css(cols[i])}));
+      svg.append(el("text",{x:230,y},`${labels[i]} ${Math.round(100*v/tot)}%`));a0=a1;});
+  }
+  function draw(){
+    barras(document.getElementById("g-barras"),["Manzana","Banana","Naranja","Pera"],[8,6,4,2],{max:10});
+    torta(document.getElementById("g-torta"),["Manzana","Banana","Naranja","Pera"],[8,6,4,2]);
+    barras(document.getElementById("g-histo"),[],[3,7,10,6,4],{w:420,h:220,pegadas:true,edges:[145,150,155,160,165,170],max:12,col:"--c2"});
+  }
+  draw();
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw)}catch(e){}
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>
+
+</body>
+</html>
