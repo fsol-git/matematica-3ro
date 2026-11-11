@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Examen mock de Sistemas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: hoja cuadriculada; cada ejercicio es una consigna con casilleros para completar; la corrección aparece en rojo como birome de la profe */
+:root{
+  --paper:#FAFAF6; --grid:rgba(40,80,170,.07); --card:#FFFFFF; --text:#1C2130; --muted:#5A6276;
+  --ink:#1E3A94; --ink-soft:rgba(30,58,148,.10); --red:#C2322A; --red-soft:rgba(194,50,42,.10);
+  --ok:#1F7A4F; --ok-soft:rgba(31,122,79,.12); --hl:#FFF0A0; --line:#D9DCE6;
+  --c1:#1E3A94; --c2:#E08A1E; --c3:#2E8B6E; --c4:#B04A8C;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#13161E; --grid:rgba(143,168,255,.06); --card:#1A1E29; --text:#E6E8EF; --muted:#9AA2B5;
+  --ink:#93A9FF; --ink-soft:rgba(147,169,255,.14); --red:#FF7B6E; --red-soft:rgba(255,123,110,.14);
+  --ok:#5CCB94; --ok-soft:rgba(92,203,148,.14); --hl:#4D4413; --line:#2D3343;
+  --c1:#93A9FF; --c2:#F2A94A; --c3:#5CC6A4; --c4:#E07CC0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--text);font:17px/1.55 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:780px;margin:0 auto;padding-block:28px 90px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(1.9rem,6vw,2.7rem);font-weight:800;color:var(--ink)}
+h2{font-size:1.25rem;font-weight:800;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 .n{font-family:var(--f-mono);font-size:.9rem;color:var(--red);font-weight:500}
+h2 .pts{margin-left:auto;font-family:var(--f-mono);font-size:.78rem;font-weight:500;color:var(--muted)}
+p{margin:0}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);max-width:62ch}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--ink-soft)}
+.tabs a{font-family:var(--f-display);font-weight:600;text-decoration:none;color:var(--muted);padding:8px 14px;border-radius:6px 6px 0 0;margin-bottom:-2px;border-bottom:2px solid transparent}
+.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink);background:var(--card)}
+.tabs a:focus-visible{outline:2px solid var(--ink)}
+.view{display:flex;flex-direction:column;gap:22px}
+.ej{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.ej.done-ok{border-color:var(--ok)}
+.data{font-family:var(--f-mono);font-size:.9rem;background:var(--ink-soft);border-radius:6px;padding:10px 12px;line-height:1.7;word-spacing:2px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:center;white-space:nowrap}
+th{font-family:var(--f-mono);font-weight:500;font-size:.82rem;background:var(--ink-soft);color:var(--ink)}
+td.l{text-align:left}
+input.q,select.q{font:inherit;font-family:var(--f-mono);font-size:.95rem;width:5.6em;padding:4px 6px;border:1.5px solid var(--line);border-radius:5px;background:var(--paper);color:var(--text);text-align:center}
+input.q.w{width:8em} select.q{width:auto;text-align:left;max-width:100%}
+input.q:focus,select.q:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--ink-soft)}
+.q.ok{border-color:var(--ok);background:var(--ok-soft)}
+.q.bad{border-color:var(--red);background:var(--red-soft)}
+.fix{font-family:var(--f-hand);font-size:1.3rem;color:var(--red);margin-left:6px;white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.row label{min-width:0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+@media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr);gap:4px}.grid2 label{margin-top:6px}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 .95rem var(--f-body);border-radius:6px;padding:8px 16px;cursor:pointer;border:1.5px solid var(--ink);background:var(--ink);color:var(--card)}
+button.sec{background:transparent;color:var(--ink)}
+button:focus-visible{outline:3px solid var(--ink-soft);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.res{font-weight:700}
+.res.ok{color:var(--ok)} .res.bad{color:var(--red)}
+details.pista summary{cursor:pointer;color:var(--ink);font-size:.92rem}
+details.pista p{margin-top:6px;font-size:.95rem;color:var(--muted)}
+.nota{font-family:var(--f-hand);font-size:1.35rem;line-height:1.2;color:var(--red)}
+figure{margin:0;max-width:420px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font:11px var(--f-body)}
+svg .gl{stroke:var(--line)} svg .ax{stroke:var(--muted)}
+.bar{position:sticky;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);
+  padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+.timer{font-family:var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.boleta{background:var(--card);border:2px solid var(--red);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.boleta .big{font-family:var(--f-hand);font-size:3.2rem;line-height:1;color:var(--red)}
+.boleta table td{white-space:normal}
+textarea{width:100%;min-height:9em;font:13px/1.5 var(--f-mono);background:var(--paper);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px}
+.intro{display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.sis{display:inline-flex;flex-direction:column;border-left:2.5px solid var(--ink);border-radius:6px 0 0 6px;padding:2px 0 2px 9px;font-family:var(--f-mono);font-size:.92rem;line-height:1.6;text-align:left}
+.planos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:560px}
+.planos figure{max-width:none;text-align:center;font-size:.85rem;color:var(--muted)}
+.planos b{color:var(--text)}
+.vfl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+@media (max-width:520px){.vfl{grid-template-columns:minmax(0,1fr);gap:4px}}
+.wide{max-width:460px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">3er año · Unidad IV · Sistemas de ecuaciones</span>
+  <h1>Examen mock de Sistemas de ecuaciones</h1>
+  <p class="lead">Nueve ejercicios, uno por cada ejercicio del cuadernillo del 1 al 9, con datos nuevos. Hacé las cuentas y los gráficos en la carpeta y escribí acá los resultados. Al final tocá <b>Entregar</b> y te sale la nota sobre 10.</p>
+  <p class="nota">Soluciones como (x ; y), con punto y coma. Si no hay solución escribí «no tiene»; si hay infinitas, «infinitas». Fracciones como 1/3.</p>
+</header>
+
+<div class="view">
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">1</span>Los dos autos<span class="pts">1 punto</span></h2>
+    <p>Dos autos van por la misma ruta. El <b>primer auto</b> sale del km 100 y a las 3 horas de viaje está en el km 340, siempre a la misma velocidad. El <b>segundo auto</b> está en el gráfico (x = horas de viaje, y = kilómetro de la ruta).</p>
+    <figure class="wide"><svg id="g-autos" viewBox="0 0 360 260" role="img" aria-label="Gráfico del segundo auto: una recta que pasa por (1 ; 120) y por (5 ; 520)"></svg></figure>
+    <div class="grid2">
+      <label>Fórmula del primer auto: y = <b>?</b> x + …</label><input class="q" data-ans="80">
+      <label>Fórmula del primer auto: y = … x + <b>?</b></label><input class="q" data-ans="100">
+      <label>Fórmula del segundo auto: y = <b>?</b> x + …</label><input class="q" data-ans="100">
+      <label>Fórmula del segundo auto: y = … x + <b>?</b></label><input class="q" data-ans="20">
+      <label>¿A las cuántas horas se encuentran?</label><input class="q" data-ans="4">
+      <label>¿En qué kilómetro?</label><input class="q" data-ans="420">
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">2</span>Resolver gráficamente<span class="pts">1,5 puntos</span></h2>
+    <p>Despejá y en cada ecuación, graficá las dos rectas en la carpeta y leé la solución.</p>
+    <div class="tw"><table>
+      <tr><th></th><th>Sistema</th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td><span class="sis"><span>x + y = 4</span><span>2x − y = 5</span></span></td><td><input class="q w" data-par="3,1"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>b</td><td><span class="sis"><span>2y − x = 6</span><span>y + 2x = −2</span></span></td><td><input class="q w" data-par="-2,2"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>c</td><td><span class="sis"><span>y − 2x = 1</span><span>4x − 2y = 6</span></span></td><td><input class="q w" data-par="none"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+      <tr><td>d</td><td><span class="sis"><span>3x − y = 2</span><span>2y − 6x = −4</span></span></td><td><input class="q w" data-par="inf"></td><td><select class="q tipo" data-ans="sci"></select></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">3</span>Leer gráficos y clasificar<span class="pts">1 punto</span></h2>
+    <p>Cada gráfico muestra las dos rectas de un sistema.</p>
+    <div class="planos">
+      <figure><svg id="p-a" viewBox="0 0 220 220" role="img" aria-label="Gráfico a: dos rectas que se cortan en un punto"></svg><b>a</b></figure>
+      <figure><svg id="p-b" viewBox="0 0 220 220" role="img" aria-label="Gráfico b: dos rectas superpuestas, una gruesa y otra punteada encima"></svg><b>b</b></figure>
+      <figure><svg id="p-c" viewBox="0 0 220 220" role="img" aria-label="Gráfico c: dos rectas paralelas"></svg><b>c</b></figure>
+      <figure><svg id="p-d" viewBox="0 0 220 220" role="img" aria-label="Gráfico d: dos rectas que se cortan sobre el eje x"></svg><b>d</b></figure>
+    </div>
+    <div class="tw"><table>
+      <tr><th></th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td><input class="q w" data-par="-1,3"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>b</td><td><input class="q w" data-par="inf"></td><td><select class="q tipo" data-ans="sci"></select></td></tr>
+      <tr><td>c</td><td><input class="q w" data-par="none"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+      <tr><td>d</td><td><input class="q w" data-par="2,0"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="1">
+    <h2><span class="n">4</span>Clasificar mirando las pendientes<span class="pts">1 punto</span></h2>
+    <p>Sin resolver: despejá y, compará pendientes y ordenadas, y clasificá.</p>
+    <div class="tw"><table>
+      <tr><th></th><th>Sistema</th><th>m de la 1ª</th><th>m de la 2ª</th><th>Tipo</th></tr>
+      <tr><td>a</td><td><span class="sis"><span>2x + y = 3</span><span>y = −2x + 5</span></span></td><td><input class="q" data-ans="-2"></td><td><input class="q" data-ans="-2"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+      <tr><td>b</td><td><span class="sis"><span>y − 4x = 1</span><span>2y + x = 6</span></span></td><td><input class="q" data-ans="4"></td><td><input class="q" data-ans="-0.5" data-show="−1/2"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>c</td><td><span class="sis"><span>3y = x + 6</span><span>x − 3y = 3</span></span></td><td><input class="q" data-ans="0.33333" data-tol="0.01" data-show="1/3"></td><td><input class="q" data-ans="0.33333" data-tol="0.01" data-show="1/3"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+      <tr><td>d</td><td><span class="sis"><span>2y = 4x + 2</span><span>y − 2x = 1</span></span></td><td><input class="q" data-ans="2"></td><td><input class="q" data-ans="2"></td><td><select class="q tipo" data-ans="sci"></select></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="0.5">
+    <h2><span class="n">5</span>Verdadero o falso<span class="pts">0,5 puntos</span></h2>
+    <div class="vfl">
+      <label><b>a)</b> Si al resolver un sistema queda 0 = 7, el sistema tiene una única solución.</label><select class="q vf" data-ans="f"></select>
+      <label><b>b)</b> Dos rectas con distinta pendiente siempre se cortan en un solo punto.</label><select class="q vf" data-ans="v"></select>
+      <label><b>c)</b> Un sistema compatible indeterminado no tiene solución.</label><select class="q vf" data-ans="f"></select>
+      <label><b>d)</b> Si dos rectas tienen la misma pendiente y la misma ordenada, el sistema tiene infinitas soluciones.</label><select class="q vf" data-ans="v"></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">6</span>Método de igualación<span class="pts">1,5 puntos</span></h2>
+    <div class="tw"><table>
+      <tr><th></th><th>Sistema</th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td><span class="sis"><span>y = 2x − 1</span><span>y = −x + 8</span></span></td><td><input class="q w" data-par="3,5"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>b</td><td><span class="sis"><span>x + y = 6</span><span>3x + 3y = 18</span></span></td><td><input class="q w" data-par="inf"></td><td><select class="q tipo" data-ans="sci"></select></td></tr>
+      <tr><td>c</td><td><span class="sis"><span>2x − y = 5</span><span>x + 3y = −1</span></span></td><td><input class="q w" data-par="2,-1"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>d</td><td><span class="sis"><span>4x − 2y = 2</span><span>y = 2x + 3</span></span></td><td><input class="q w" data-par="none"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">7</span>Método de sustitución<span class="pts">1,5 puntos</span></h2>
+    <div class="tw"><table>
+      <tr><th></th><th>Sistema</th><th>Solución</th><th>Tipo</th></tr>
+      <tr><td>a</td><td><span class="sis"><span>x = 2y + 1</span><span>3x − 4y = 7</span></span></td><td><input class="q w" data-par="5,2"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>b</td><td><span class="sis"><span>y = 3 − x</span><span>2x + 2y = 10</span></span></td><td><input class="q w" data-par="none"></td><td><select class="q tipo" data-ans="si"></select></td></tr>
+      <tr><td>c</td><td><span class="sis"><span>x + 4y = 2</span><span>2x − y = −5</span></span></td><td><input class="q w" data-par="-2,1"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+      <tr><td>d</td><td><span class="sis"><span>y = 2x − 3</span><span>6x − 3y = 9</span></span></td><td><input class="q w" data-par="inf"></td><td><select class="q tipo" data-ans="sci"></select></td></tr>
+      <tr><td>e</td><td><span class="sis"><span>3x + y = 1</span><span>x − 2y = 12</span></span></td><td><input class="q w" data-par="2,-5"></td><td><select class="q tipo" data-ans="scd"></select></td></tr>
+    </table></div>
+  </div>
+
+  <div class="ej" data-pts="0.5">
+    <h2><span class="n">8</span>Verdadero o falso<span class="pts">0,5 puntos</span></h2>
+    <div class="vfl">
+      <label><b>a)</b> El sistema y = 3x + 1 ; y = 3x − 2 es incompatible.</label><select class="q vf" data-ans="v"></select>
+      <label><b>b)</b> El par (2 ; 1) es solución del sistema x + y = 3 ; x − y = 3.</label><select class="q vf" data-ans="f"></select>
+      <label><b>c)</b> Si al resolver un sistema queda 0 = 0, hay un error en las cuentas.</label><select class="q vf" data-ans="f"></select>
+      <label><b>d)</b> Un sistema compatible determinado tiene un solo par (x ; y) como solución.</label><select class="q vf" data-ans="v"></select>
+    </div>
+  </div>
+
+  <div class="ej" data-pts="1.5">
+    <h2><span class="n">9</span>Problemas<span class="pts">1,5 puntos</span></h2>
+    <p>Armá el sistema en la carpeta, resolvelo y escribí acá los resultados.</p>
+    <p><b>a)</b> La suma de dos números es 40 y uno es el triple del otro.</p>
+    <div class="grid2"><label>Número mayor</label><input class="q" data-ans="30"><label>Número menor</label><input class="q" data-ans="10"></div>
+    <p><b>b)</b> En un kiosco, 2 alfajores y 3 chupetines cuestan $3300, y un alfajor y un chupetín cuestan $1400.</p>
+    <div class="grid2"><label>Precio del alfajor ($)</label><input class="q" data-ans="900"><label>Precio del chupetín ($)</label><input class="q" data-ans="500"></div>
+    <p><b>c)</b> Una mamá tiene 28 años más que su hijo, y entre los dos suman 44 años.</p>
+    <div class="grid2"><label>Edad de la mamá</label><input class="q" data-ans="36"><label>Edad del hijo</label><input class="q" data-ans="8"></div>
+    <p><b>d)</b> En un corral hay gallinas y conejos: en total son 30 cabezas y 80 patas.</p>
+    <div class="grid2"><label>Gallinas</label><input class="q" data-ans="20"><label>Conejos</label><input class="q" data-ans="10"></div>
+    <p><b>e)</b> Juan juntó 40 billetes, unos de $200 y otros de $500, y tiene en total $11.000.</p>
+    <div class="grid2"><label>Billetes de $200</label><input class="q" data-ans="30"><label>Billetes de $500</label><input class="q" data-ans="10"></div>
+  </div>
+
+  <div class="boleta" id="boleta" hidden>
+    <span class="eyebrow">Resultado</span>
+    <div class="big" id="nota"></div>
+    <div class="tw"><table id="detalle"></table></div>
+    <p>Las respuestas en rojo al lado de cada casillero son las correctas. Para mandar el resultado, copialo:</p>
+    <textarea id="resumen" readonly></textarea>
+    <div class="btns"><button id="copiar">Copiar resultado</button><span id="copiado" class="res ok"></span></div>
+  </div>
+
+  <div class="bar">
+    <span class="timer" id="timer">00:00</span>
+    <div class="btns"><button class="sec" id="reset-s">Empezar de nuevo</button><button id="entregar">Entregar</button></div>
+  </div>
+</div>
+<p style="font-size:.85rem"><a href="./" style="color:var(--ink)">← Volver a la guía</a></p>
+</div>
+
+<script>
+(function(){
+  const NS="http://www.w3.org/2000/svg";
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const KEY="examen-sist-v1";
+  const fill=(s,ops)=>ops.forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;s.append(o)});
+  document.querySelectorAll("select.tipo").forEach(s=>fill(s,[["","elegí…"],["scd","Compatible determinado"],["sci","Compatible indeterminado"],["si","Incompatible"]]));
+  document.querySelectorAll("select.vf").forEach(s=>fill(s,[["","elegí…"],["v","Verdadero"],["f","Falso"]]));
+  const fmt=x=>String(Math.round(x*1000)/1000).replace(".",",").replace("-","−");
+
+  document.querySelectorAll(".q").forEach((q,i)=>{q.id="q"+i; if(q.tagName==="INPUT"){q.setAttribute("inputmode",q.dataset.par?"text":"decimal");q.autocomplete="off";if(q.dataset.par)q.placeholder="(x ; y)"}});
+  let store={};
+  try{store=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){store={}}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+  document.querySelectorAll(".q").forEach(q=>{ if(store.v&&store.v[q.id]!=null)q.value=store.v[q.id];
+    q.addEventListener("input",()=>{store.v=store.v||{};store.v[q.id]=q.value;save();q.classList.remove("ok","bad");}) });
+
+  // números con coma decimal, signo menos tipográfico y fracciones (1/3, −1/2)
+  const nums=s=>(String(s).replace(/[−–]/g,"-").replace(/(\d),(\d)/g,"$1.$2").match(/-?\d+(\.\d+)?(\s*\/\s*\d+(\.\d+)?)?/g)||[])
+    .map(t=>{const [a,b]=t.split("/");return b!=null?Number(a)/Number(b):Number(a)});
+  function isOk(q){
+    const v=q.value.trim(); if(!v)return false;
+    if(q.tagName==="SELECT")return v===q.dataset.ans;
+    if(q.dataset.par){
+      if(q.dataset.par==="none")return /no tiene|ningun|sin soluc|no hay|∅|vac/i.test(v);
+      if(q.dataset.par==="inf")return /infinit|∞/i.test(v);
+      const want=q.dataset.par.split(",").map(Number);
+      const n=nums(v.includes(";")?v:v.replace(/,\s+|,(?=\s*-)/,";").replace(/^(\(?\s*-?\d+),(-?\d+\s*\)?)$/,"$1;$2"));
+      return n.length===2&&Math.abs(n[0]-want[0])<1e-6&&Math.abs(n[1]-want[1])<1e-6;
+    }
+    const n=nums(v);if(n.length!==1)return false;
+    return Math.abs(n[0]-Number(q.dataset.ans))<=(q.dataset.tol?Number(q.dataset.tol):0.005)+1e-9;
+  }
+  function answerText(q){
+    if(q.tagName==="SELECT")return q.querySelector(`option[value="${q.dataset.ans}"]`).textContent;
+    if(q.dataset.par){if(q.dataset.par==="none")return "no tiene";if(q.dataset.par==="inf")return "infinitas";
+      const [a,b]=q.dataset.par.split(",").map(Number);return `(${fmt(a)} ; ${fmt(b)})`}
+    if(q.dataset.show)return q.dataset.show;
+    return fmt(Number(q.dataset.ans));
+  }
+  function mark(q){
+    const ok=isOk(q);q.classList.toggle("ok",ok);q.classList.toggle("bad",!ok);
+    let f=q.nextElementSibling&&q.nextElementSibling.classList.contains("fix")?q.nextElementSibling:null;
+    if(!ok){if(!f){f=document.createElement("span");f.className="fix";q.after(f)}f.textContent="→ "+answerText(q)} else if(f)f.remove();
+    return ok;
+  }
+
+  const allQs=[...document.querySelectorAll(".q")];
+  const ejs=[...document.querySelectorAll("[data-pts]")];
+  function entregar(){
+    let total=0;const filas=[];const lines=[];
+    ejs.forEach(ej=>{const qs=[...ej.querySelectorAll(".q")];const k=qs.filter(mark).length;
+      const pts=Number(ej.dataset.pts),got=Math.round(pts*k/qs.length*100)/100;total+=got;
+      const t=ej.querySelector("h2").childNodes[1].textContent.trim();const n=ej.querySelector(".n").textContent;
+      filas.push(`<tr><td>${n}</td><td class="l">${t}</td><td>${k}/${qs.length}</td><td>${fmt(got)} / ${fmt(pts)}</td></tr>`);
+      lines.push(`${n}. ${t}: ${fmt(got)}/${fmt(pts)} (${k} de ${qs.length} casilleros)`);});
+    const nota=Math.round(total*10)/10;
+    document.getElementById("nota").textContent=fmt(nota)+" / 10";
+    document.getElementById("detalle").innerHTML=`<tr><th>Ej.</th><th>Tema</th><th>Bien</th><th>Puntos</th></tr>`+filas.join("");
+    const t=store.tiempo||document.getElementById("timer").textContent;
+    document.getElementById("timer").textContent=t;
+    document.getElementById("resumen").value=`Examen mock de Sistemas de ecuaciones — nota ${fmt(nota)}/10 — tiempo ${t}\n`+lines.join("\n");
+    allQs.forEach(q=>q.disabled=true);document.getElementById("entregar").disabled=true;
+    store.entregado=true;store.tiempo=t;save();clearInterval(tid);
+    document.getElementById("boleta").hidden=false;
+  }
+  document.getElementById("entregar").onclick=()=>{entregar();document.getElementById("boleta").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})};
+  document.getElementById("reset-s").onclick=()=>{
+    allQs.forEach(q=>{q.value="";q.disabled=false;q.classList.remove("ok","bad")});
+    document.querySelectorAll(".fix").forEach(f=>f.remove());
+    document.getElementById("boleta").hidden=true;document.getElementById("entregar").disabled=false;
+    store={};save();startTimer();
+  };
+  document.getElementById("copiar").onclick=()=>{const ta=document.getElementById("resumen"),msg=document.getElementById("copiado");
+    const p=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(ta.value):Promise.reject();
+    p.then(()=>msg.textContent="Copiado").catch(()=>{ta.focus();ta.select();msg.textContent="Seleccionado: copialo con el menú"})};
+
+  let tid=null;
+  function startTimer(){ if(!store.inicio){store.inicio=Date.now();save()}
+    clearInterval(tid);const el=document.getElementById("timer");
+    const tick=()=>{const s=Math.floor((Date.now()-store.inicio)/1000);el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
+    tick();tid=setInterval(tick,1000)}
+
+  /* ---------- gráficos ---------- */
+  function el(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+  // plano cartesiano: rango [lo,hi] en ambos ejes, rectas {m,b,col}
+  function plano(svg,lo,hi,rectas){
+    svg.innerHTML="";const S=+svg.viewBox.baseVal.width,pad=14,u=(S-2*pad)/(hi-lo);
+    const X=x=>pad+(x-lo)*u,Y=y=>S-pad-(y-lo)*u;
+    for(let v=lo;v<=hi;v++){svg.append(el("line",{x1:X(v),x2:X(v),y1:Y(lo),y2:Y(hi),class:"gl"}));svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(v),y2:Y(v),class:"gl"}));
+      if(v!==0&&v%2===0){svg.append(el("text",{x:X(v),y:Y(0)+11,"text-anchor":"middle"},v));svg.append(el("text",{x:X(0)-4,y:Y(v)+3,"text-anchor":"end"},v))}}
+    svg.append(el("line",{x1:X(lo),x2:X(hi),y1:Y(0),y2:Y(0),class:"ax"}));svg.append(el("line",{x1:X(0),x2:X(0),y1:Y(lo),y2:Y(hi),class:"ax"}));
+    rectas.forEach(r=>svg.append(el("line",{x1:X(lo-2),y1:Y(r.m*(lo-2)+r.b),x2:X(hi+2),y2:Y(r.m*(hi+2)+r.b),stroke:css(r.col),"stroke-width":r.w||2.4,"stroke-dasharray":r.dash||"none"})));
+    svg.style.overflow="hidden";
+  }
+  function autos(){
+    const s=document.getElementById("g-autos");s.innerHTML="";const w=360,h=260,L=44,R=14,T=14,B=34,pw=w-L-R,ph=h-T-B,mx=6,my=700;
+    const X=x=>L+pw*x/mx,Y=y=>T+ph-ph*y/my;
+    for(let v=0;v<=my;v+=100){s.append(el("line",{x1:L,x2:w-R,y1:Y(v),y2:Y(v),class:"gl"}));s.append(el("text",{x:L-6,y:Y(v)+4,"text-anchor":"end"},v))}
+    for(let v=0;v<=mx;v++){s.append(el("line",{x1:X(v),x2:X(v),y1:T,y2:T+ph,class:"gl"}));s.append(el("text",{x:X(v),y:T+ph+15,"text-anchor":"middle"},v))}
+    s.append(el("line",{x1:L,x2:w-R,y1:T+ph,y2:T+ph,class:"ax"}));s.append(el("line",{x1:L,x2:L,y1:T,y2:T+ph,class:"ax"}));
+    s.append(el("text",{x:w-R,y:h-3,"text-anchor":"end"},"horas"));s.append(el("text",{x:L+6,y:T+12},"km"));
+    s.append(el("line",{x1:X(0),y1:Y(20),x2:X(6),y2:Y(620),stroke:css("--c2"),"stroke-width":2.6}));
+    [[1,120],[5,520]].forEach(([x,y])=>{s.append(el("circle",{cx:X(x),cy:Y(y),r:4.5,fill:css("--red")}));
+      const t=el("text",{x:X(x)+8,y:Y(y)+14},`(${x} ; ${y})`);t.style.fill=css("--text");t.style.fontWeight="700";s.append(t)});
+  }
+  function draw(){
+    autos();
+    plano(document.getElementById("p-a"),-5,5,[{m:1,b:4,col:"--c1"},{m:-2,b:1,col:"--c2"}]);
+    plano(document.getElementById("p-b"),-5,5,[{m:-1,b:1,col:"--c1",w:6},{m:-1,b:1,col:"--c2",w:2,dash:"6 5"}]);
+    plano(document.getElementById("p-c"),-5,5,[{m:2,b:1,col:"--c1"},{m:2,b:-2,col:"--c2"}]);
+    plano(document.getElementById("p-d"),-5,5,[{m:.5,b:-1,col:"--c1"},{m:-1,b:2,col:"--c2"}]);
+  }
+  draw();
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw)}catch(e){}
+  if(store.entregado)entregar(); else startTimer();
+})();
+</script>
+</body>
+</html>
